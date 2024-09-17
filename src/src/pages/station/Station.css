@@ -1,0 +1,20 @@
+.leaflet-tooltip {
+  font-size: 14px;
+  border-radius: 12px;
+}
+
+.leaflet-container {
+  font-family: "Montserrat", sans-serif;
+}
+
+.leaflet-popup-content {
+  width: fit-content !important;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 24px;
+}
+
+.modal-backdrop.show {
+  opacity: 1;
+}

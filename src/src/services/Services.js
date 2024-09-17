@@ -15,6 +15,18 @@ class Services {
         console.log(error);
       });
   }
+
+  get_daily_weather(month, year, stationId) {
+    const url = `${Configuration.get_url_api_aclimate()}/DailyWeatherData/Climatology/${stationId}/json?year=${year}&month=${month}`;
+    return axios
+      .get(url)
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 }
 
 export default new Services();
