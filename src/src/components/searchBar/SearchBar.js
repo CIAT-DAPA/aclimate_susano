@@ -2,7 +2,7 @@ import { IconSearch, IconRouter } from "@tabler/icons-react";
 import React, { useState } from "react";
 import "./SearchBar.css";
 
-function SearchBar({ stations, onStationClick, bigSize }) {
+function SearchBar({ stations, onStationClick, bigSize, dashboard }) {
   const [filterText, setFilterText] = useState("");
   const [selectedStation, setSelectedStation] = useState(null);
 
@@ -20,7 +20,6 @@ function SearchBar({ stations, onStationClick, bigSize }) {
     .filter((station) =>
       station.name.toLowerCase().includes(filterText.toLowerCase())
     );
-    console.log(filteredStations);
 
   const handleStationClick = (station) => {
     if (onStationClick) {
@@ -32,7 +31,7 @@ function SearchBar({ stations, onStationClick, bigSize }) {
 
   return (
     <>
-      <div className={`bar-hints`}>
+      <div className={`${dashboard?"":"bar-hints"}`}>
         <div
           className={`d-flex px-3 bg-white align-items-center border-bottom justify-content-between py-2 ${
             filterText === "" || filterText.length < 3
@@ -58,7 +57,7 @@ function SearchBar({ stations, onStationClick, bigSize }) {
         </div>
 
         {filterText !== "" && filterText.length >= 3 && (
-          <div className="bg-white stations-search px-3 py-1">
+          <div className="bg-white stations-search px-3 py-1 position-absolute w-100">
             {filteredStations.map((station) => (
               <div
                 className="py-1 small hint-div text-capitalize"

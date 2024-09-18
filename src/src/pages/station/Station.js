@@ -29,10 +29,11 @@ function Station() {
     //Call to API to get stations
     Services.get_all_weatherStation()
       .then((response) => {
-        setStations(response);
+        const filteredResponseByCHIRPS = response.filter(item => item.origin === "CHIRPS y ERA-5");
+        setStations(filteredResponseByCHIRPS);
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   }, []);
 
@@ -167,8 +168,7 @@ function Station() {
       <SearchBar
         bigSize={true}
         stations={stations}
-        onStationClick={handleStationClick} // Asegúrate de que esto sea una función
-        type="stations"
+        onStationClick={handleStationClick}
       />
     </>
   );
