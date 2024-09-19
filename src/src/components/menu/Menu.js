@@ -7,29 +7,13 @@ import React, { useState } from "react";
 import logo from "../../assets/img/logo.png";
 
 function Menu() {
-  const [opacity, setOpacity] = useState(1);
-
-  const changeNavbarOpacity = () => {
-    if (window.scrollY >= 80) {
-      setOpacity(0.3);
-    } else {
-      setOpacity(1);
-    }
-  };
-
-  window.addEventListener("scroll", changeNavbarOpacity);
-
   return (
-    <Navbar
-      collapseOnSelect
-      expand="lg"
-      style={{
-        opacity: `${opacity}`,
-      }}
-      className="w-100 menu p-0"
-    >
-      <Container className="py-1">
-        <Navbar.Brand href="/" className="d-flex align-items-center gap-3">
+    <Navbar collapseOnSelect expand="lg" className="w-100 p-0 bg-dark">
+      <Container className="py-1 ">
+        <Navbar.Brand
+          href="/"
+          className="d-flex align-items-center gap-3 text-light"
+        >
           <img
             alt=""
             src={logo}
@@ -46,7 +30,7 @@ function Menu() {
           id="responsive-navbar-nav"
         >
           <Nav className="justify-content-end align-items-lg-center">
-            <Link className="nav-link text-black" to="/estaciones">
+            <Link className="nav-link text-light" to="/estaciones">
               Estaciones
             </Link>
           </Nav>

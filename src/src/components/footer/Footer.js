@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 
 function Footer() {
   return (
-    <footer>
+    <footer className="bg-dark text-light">
       <Container>
         <footer className="py-5">
           <div className="row">
@@ -15,12 +15,12 @@ function Footer() {
               <h5>Secciones</h5>
               <ul className="nav flex-column">
                 <li className="nav-item mb-2 item-footer">
-                  <Link className="nav-link text-white" to="/">
+                  <Link className="nav-link text-light" to="/">
                     Home
                   </Link>
                 </li>
                 <li className="nav-item mb-2 item-footer">
-                  <Link className="nav-link text-white" to="/estaciones">
+                  <Link className="nav-link text-light" to="/estaciones">
                     Estaciones
                   </Link>
                 </li>
@@ -32,7 +32,7 @@ function Footer() {
                 <li className="nav-item mb-2 item-footer">
                   <a
                     href="mailto: J.R.Villegas@cgiar.org"
-                    className="nav-link text-white "
+                    className="nav-link text-light"
                   >
                     J.R.Villegas@cgiar.org
                   </a>

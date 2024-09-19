@@ -174,7 +174,7 @@ const Dashboard = () => {
                   <option value="2">Últimos 30 días</option>
                 </Form.Select>
                 <Button variant="primary">
-                  Comparar con datos estacionales
+                  Comparar con datos satelitales
                 </Button>
               </div>
 
