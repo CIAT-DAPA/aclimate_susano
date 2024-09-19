@@ -1,10 +1,9 @@
 const ACLIMATE_API = "https://webapi.aclimate.org/api";
 
-
-class Configuration {
-  get_url_api_aclimate() {
+const Configuration = {
+  getAclimateApiUrl() {
     return ACLIMATE_API;
   }
-}
+};
 
-export default new Configuration();
+export default Configuration;

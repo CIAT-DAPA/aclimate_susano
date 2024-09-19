@@ -27,7 +27,7 @@ function Station() {
 
   useEffect(() => {
     //Call to API to get stations
-    Services.get_all_weatherStation()
+    Services.getAllWeatherStations()
       .then((response) => {
         const filteredResponseByCHIRPS = response.filter(item => item.origin === "CHIRPS y ERA-5");
         setStations(filteredResponseByCHIRPS);

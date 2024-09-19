@@ -50,7 +50,7 @@ const Dashboard = () => {
     const fetchStations = async () => {
       setIsLoading(true);
       try {
-        const response = await Services.get_all_weatherStation();
+        const response = await Services.getAllWeatherStations();
         const filteredStations = response.filter(
           (item) => item.origin === "CHIRPS y ERA-5"
         );
@@ -69,7 +69,7 @@ const Dashboard = () => {
       if (!currentStation) return;
       setIsLoading(true);
       try {
-        const response = await Services.get_daily_weather(12, 2022, idWS);
+        const response = await Services.getDailyWeather(12, 2022, idWS);
         const parsedData = parseWeatherData(
           response.daily_readings,
           response.month,

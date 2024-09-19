@@ -4,28 +4,30 @@ import Configuration from "../conf/Configuration";
 const NICARAGUA_ID = "651437a78a8437279ea6ca2c";
 
 class Services {
-  get_all_weatherStation() {
-    const url = `${Configuration.get_url_api_aclimate()}/geographic/${NICARAGUA_ID}/WeatherStations/json`;
-    return axios
-      .get(url)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  constructor() {
+    this.apiBaseUrl = Configuration.getAclimateApiUrl();
   }
 
-  get_daily_weather(month, year, stationId) {
-    const url = `${Configuration.get_url_api_aclimate()}/DailyWeatherData/Climatology/${stationId}/json?year=${year}&month=${month}`;
-    return axios
-      .get(url)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  async getAllWeatherStations() {
+    const url = `${this.apiBaseUrl}/geographic/${NICARAGUA_ID}/WeatherStations/json`;
+    try {
+      const response = await axios.get(url);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching weather stations:", error);
+      throw error; // Propagar el error para que pueda manejarse a nivel superior
+    }
+  }
+
+  async getDailyWeather(month, year, stationId) {
+    const url = `${this.apiBaseUrl}/DailyWeatherData/Climatology/${stationId}/json?year=${year}&month=${month}`;
+    try {
+      const response = await axios.get(url);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching daily weather for station ${stationId}:`, error);
+      throw error;
+    }
   }
 }
 
