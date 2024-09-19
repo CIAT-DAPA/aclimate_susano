@@ -2,16 +2,17 @@ import React from "react";
 import { Container } from "react-bootstrap";
 import cgiarLogo from "../../assets/img/cgiar.png";
 import allianceLogo from "../../assets/img/alliance.png";
-import "./Footer.css";
 import { Link } from "react-router-dom";
+import "./Footer.css";
 
 function Footer() {
   return (
     <footer className="bg-dark text-light">
       <Container>
-        <footer className="py-5">
+        <section className="py-5">
           <div className="row">
-            <div className="col ">
+            {/* Sección de Navegación */}
+            <nav className="col">
               <h5>Secciones</h5>
               <ul className="nav flex-column">
                 <li className="nav-item mb-2 item-footer">
@@ -25,8 +26,10 @@ function Footer() {
                   </Link>
                 </li>
               </ul>
-            </div>
-            <div className="col ">
+            </nav>
+
+            {/* Sección de Contacto */}
+            <section className="col">
               <h5>Contacto</h5>
               <ul className="nav flex-column">
                 <li className="nav-item mb-2 item-footer">
@@ -38,22 +41,26 @@ function Footer() {
                   </a>
                 </li>
               </ul>
-            </div>
-            <div className="col ">
+            </section>
+
+            {/* Sección de Socios */}
+            <section className="col">
               <h5>Socios:</h5>
-              <img
-                src={cgiarLogo}
-                alt="partner CGIAR"
-                className="mx-3 my-2 my-md-0"
-              />
-              <img
-                src={allianceLogo}
-                alt="partner Alliance"
-                className="mx-3 my-2 my-md-0"
-              />
-            </div>
+              <div className="d-flex align-items-center">
+                <img
+                  src={cgiarLogo}
+                  alt="partner CGIAR"
+                  className="partner-logo mx-3"
+                />
+                <img
+                  src={allianceLogo}
+                  alt="partner Alliance"
+                  className="partner-logo mx-3"
+                />
+              </div>
+            </section>
           </div>
-        </footer>
+        </section>
       </Container>
     </footer>
   );

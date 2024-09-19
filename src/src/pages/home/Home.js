@@ -10,8 +10,13 @@ import {
 } from "@tabler/icons-react";
 
 function Home() {
+  // Definir colores en una variable para facilitar ajustes globales
+  const green = "green";
+  const white = "white";
+
   return (
     <div>
+      {/* Sección de bienvenida */}
       <div className="header-bg">
         <Container className="container-header">
           <Row className="justify-content-between flex-column flex-md-row">
@@ -24,10 +29,9 @@ function Home() {
                 tu mano.
               </p>
               <Link
-                type="button"
-                className="btn btn-primary text-light rounded-5 py-2 px-4 fw-semibold"
-                style={{ width: "fit-content" }}
                 to="/estaciones"
+                className="btn btn-primary text-light rounded-5 py-2 px-4 fw-semibold"
+                aria-label="Revisa los datos"
               >
                 Revisa los datos
               </Link>
@@ -36,24 +40,25 @@ function Home() {
         </Container>
       </div>
 
+      {/* Sección de características */}
       <Row className="g-0">
         <Feature
           title="Mapa interactivo de estaciones climáticas"
           description="Consulta en un mapa interactivo la ubicación y datos en tiempo real de las estaciones climáticas, incluyendo temperaturas, precipitaciones y más."
           image={IconMapSearch}
-          color="green"
+          color={green}
         />
         <Feature
           title="Dashboard de análisis climático"
           description="Visualiza la temperatura máxima, mínima, precipitaciones y otros datos clave en un dashboard diseñado para el análisis climático en tiempo real."
           image={IconLayoutDashboard}
-          color="white"
+          color={white}
         />
         <Feature
           title="Comparación de datos climáticos con otras fuentes"
           description="Compara los datos del dashboard con otras bases de datos climáticas, detectando patrones y obteniendo insights más precisos para tus análisis."
           image={IconCloudRain}
-          color="green"
+          color={green}
         />
       </Row>
     </div>

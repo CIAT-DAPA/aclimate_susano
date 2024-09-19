@@ -1,35 +1,33 @@
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import "./Menu.css";
+import React from "react";
+import { Container, Nav, Navbar } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
 import logo from "../../assets/img/logo.png";
+import "./Menu.css";
 
 function Menu() {
   return (
     <Navbar collapseOnSelect expand="lg" className="w-100 p-0 bg-dark">
-      <Container className="py-1 ">
-        <Navbar.Brand
-          href="/"
-          className="d-flex align-items-center gap-3 text-light"
+      <Container className="py-1">
+        <Link
+          to="/"
+          className="navbar-brand d-flex align-items-center gap-3 text-light"
         >
           <img
-            alt=""
             src={logo}
             width="35"
             height="35"
+            alt="Aclimate Monitoring Logo"
             className="d-inline-block align-top"
           />
           Aclimate Monitoring
-        </Navbar.Brand>
+        </Link>
 
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse
-          className="justify-content-end  "
+          className="justify-content-end"
           id="responsive-navbar-nav"
         >
-          <Nav className="justify-content-end align-items-lg-center">
+          <Nav className="align-items-lg-center">
             <Link className="nav-link text-light" to="/estaciones">
               Estaciones
             </Link>
@@ -39,4 +37,5 @@ function Menu() {
     </Navbar>
   );
 }
+
 export default Menu;
