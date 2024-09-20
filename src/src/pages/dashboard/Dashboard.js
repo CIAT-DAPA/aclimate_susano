@@ -166,20 +166,31 @@ const Dashboard = () => {
           </div>
         ) : (
           <>
-            <Col className="bg-white rounded p-4 my-2">
+            <Col className="bg-white rounded p-4 my-2 text-dark">
               <div className="d-flex justify-content-between mb-2">
                 <Form.Select aria-label="Periodo de tiempo" className="w-auto">
                   <option>Últimos 7 días</option>
                   <option value="1">Últimos 15 días</option>
                   <option value="2">Últimos 30 días</option>
                 </Form.Select>
-                <Button variant="primary">
+                <Button variant="primary text-light">
                   Comparar con datos satelitales
                 </Button>
               </div>
 
               <h4>{currentStation?.name}</h4>
               <hr />
+              <p>
+                La estación meteorológica <b>{currentStation?.name}</b> está
+                ubicada en{" "}
+                <b>
+                  {currentStation?.latitude + ", " + currentStation?.longitude}.
+                </b>
+                Su principal objetivo es monitorear y registrar las condiciones
+                climáticas locales, proporcionando datos precisos y en tiempo
+                real sobre la temperatura, humedad, velocidad del viento,
+                presión atmosférica y precipitación.
+              </p>
               {currentStation?.latitude && currentStation?.longitude ? (
                 <MapContainer
                   center={[currentStation.latitude, currentStation.longitude]}
@@ -209,9 +220,23 @@ const Dashboard = () => {
             </Col>
             <Row>
               <Col md={6} className="mb-4">
-                <div className="bg-light rounded p-4">
+                <div className="bg-white rounded p-4 text-dark">
                   <h5>Temperatura máxima</h5>
                   <hr />
+                  {/* <p>
+                    La gráfica muestra la evolución de la temperatura máxima
+                    registrada en la estación meteorológica{" "}
+                    <b>{currentStation?.name}</b> durante los últimos{" "}
+                    <b>7 días</b> días. En ella se destaca que el día con la
+                    temperatura más alta fue el <b>{}</b>,
+                    alcanzando un máximo de{" "}
+                    <b>{Math.max(...data.tempMax.map((item) => item.value))}</b>
+                    °C, mientras que el día más frío fue el [Fecha del día más
+                    frío], con una temperatura de [Temperatura mínima]°C. Esta
+                    visualización permite analizar las variaciones diarias de
+                    temperatura y ofrece una referencia clara para identificar
+                    patrones climáticos recientes en la región.
+                  </p> */}
                   <Line
                     data={chartConfig(
                       "Temperatura Máxima (°C)",
@@ -224,7 +249,7 @@ const Dashboard = () => {
               </Col>
 
               <Col md={6} className="mb-4">
-                <div className="bg-light rounded p-4">
+                <div className="bg-white rounded p-4 text-dark">
                   <h5>Temperatura mínima</h5>
                   <hr />
                   <Line
@@ -240,7 +265,7 @@ const Dashboard = () => {
             </Row>
             <Row>
               <Col md={6} className="mb-4">
-                <div className="bg-light rounded p-4">
+                <div className="bg-white rounded p-4 text-dark">
                   <h5>Precipitación</h5>
                   <hr />
                   <Line
@@ -255,7 +280,7 @@ const Dashboard = () => {
               </Col>
 
               <Col md={6} className="mb-4">
-                <div className="bg-light rounded p-4">
+                <div className="bg-white rounded p-4 text-dark">
                   <h5>Radiación Solar</h5>
                   <hr />
                   <Line
