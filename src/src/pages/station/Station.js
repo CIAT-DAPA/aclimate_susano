@@ -14,6 +14,7 @@ import Services from "../../services/Services";
 import L from "leaflet";
 import { IconChartDonut } from "@tabler/icons-react";
 import SearchBar from "../../components/searchBar/SearchBar";
+import { Link } from "react-router-dom";
 
 function Station() {
   const [stations, setStations] = useState([]);
@@ -107,14 +108,14 @@ function Station() {
           </tbody>
         </table>
         <div className="d-flex justify-content-between flex-column align-items-end mt-3">
-          <a
-            href={`/dashboard/${station.id}`}
+          <Link
+            to={`/dashboard/${station.id}`}
             className="btn btn-primary btn-sm text-light rounded-3 fw-medium d-flex align-items-center justify-content-between px-2 py-2 mx-2"
-            role="button"
+            aria-label="Data"
           >
             <IconChartDonut stroke={2} className="me-2" />
             Data
-          </a>
+          </Link>
         </div>
       </Popup>
       <Tooltip direction="right" offset={[0, -5]} opacity={1} permanent>
