@@ -1,9 +1,16 @@
-const ACLIMATE_API = "https://webapi.aclimate.org/api";
+/**
+ * Configuration class for application settings.
+ */
+class Configuration {
+  static #ACLIMATE_API = "https://webapi.aclimate.org/api";
 
-const Configuration = {
-  getAclimateApiUrl() {
-    return ACLIMATE_API;
+  /**
+   * Gets the Aclimate API URL.
+   * @returns {string} The Aclimate API URL.
+   */
+  static get aclimateApiUrl() {
+    return this.#ACLIMATE_API;
   }
-};
+}
 
 export default Configuration;

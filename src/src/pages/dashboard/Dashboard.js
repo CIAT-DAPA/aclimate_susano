@@ -3,30 +3,10 @@ import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import SearchBar from "../../components/searchBar/SearchBar";
 import Services from "../../services/Services";
-import { Line } from "react-chartjs-2";
-import {
-  Chart,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
 import { MapContainer, Marker, TileLayer, ZoomControl } from "react-leaflet";
 import L from "leaflet";
 import "./Dashboard.css";
-
-Chart.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import WeatherChart from "../../components/weatherChart/WeatherChart";
 
 const Dashboard = () => {
   const [data, setData] = useState({
@@ -38,6 +18,7 @@ const Dashboard = () => {
   const [stations, setStations] = useState([]);
   const [currentStation, setCurrentStation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedDays, setSelectedDays] = useState(7);
   const { idWS } = useParams();
   const navigate = useNavigate();
 
@@ -58,7 +39,9 @@ const Dashboard = () => {
         setStations(filteredStations);
         setCurrentStation(station);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching weather stations:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchStations();
@@ -77,7 +60,7 @@ const Dashboard = () => {
         );
         setData(parsedData);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching daily weather data:", error);
       } finally {
         setIsLoading(false);
       }
@@ -128,6 +111,11 @@ const Dashboard = () => {
     setCurrentStation(station);
   };
 
+  const handleDaysChange = (event) => {
+    const value = event.target.value;
+    setSelectedDays(value === "" ? 7 : parseInt(value, 10));
+  };
+
   const chartConfig = (label, data, color) => ({
     labels: data.map((item) => item.label),
     datasets: [
@@ -168,10 +156,14 @@ const Dashboard = () => {
           <>
             <Col className="bg-white rounded p-4 my-2 text-dark">
               <div className="d-flex justify-content-between mb-2">
-                <Form.Select aria-label="Periodo de tiempo" className="w-auto">
-                  <option>Últimos 7 días</option>
-                  <option value="1">Últimos 15 días</option>
-                  <option value="2">Últimos 30 días</option>
+                <Form.Select
+                  aria-label="Periodo de tiempo"
+                  className="w-auto"
+                  onChange={handleDaysChange}
+                >
+                  <option value="7">Últimos 7 días</option>
+                  <option value="15">Últimos 15 días</option>
+                  <option value="30">Últimos 30 días</option>
                 </Form.Select>
                 <Button variant="primary text-light">
                   Comparar con datos satelitales
@@ -188,8 +180,7 @@ const Dashboard = () => {
                 </b>
                 Su principal objetivo es monitorear y registrar las condiciones
                 climáticas locales, proporcionando datos precisos y en tiempo
-                real sobre la temperatura, humedad, velocidad del viento,
-                presión atmosférica y precipitación.
+                real.
               </p>
               {currentStation?.latitude && currentStation?.longitude ? (
                 <MapContainer
@@ -219,80 +210,44 @@ const Dashboard = () => {
               )}
             </Col>
             <Row>
-              <Col md={6} className="mb-4">
-                <div className="bg-white rounded p-4 text-dark">
-                  <h5>Temperatura máxima</h5>
-                  <hr />
-                  {/* <p>
-                    La gráfica muestra la evolución de la temperatura máxima
-                    registrada en la estación meteorológica{" "}
-                    <b>{currentStation?.name}</b> durante los últimos{" "}
-                    <b>7 días</b> días. En ella se destaca que el día con la
-                    temperatura más alta fue el <b>{}</b>,
-                    alcanzando un máximo de{" "}
-                    <b>{Math.max(...data.tempMax.map((item) => item.value))}</b>
-                    °C, mientras que el día más frío fue el [Fecha del día más
-                    frío], con una temperatura de [Temperatura mínima]°C. Esta
-                    visualización permite analizar las variaciones diarias de
-                    temperatura y ofrece una referencia clara para identificar
-                    patrones climáticos recientes en la región.
-                  </p> */}
-                  <Line
-                    data={chartConfig(
-                      "Temperatura Máxima (°C)",
-                      data.tempMax,
-                      "rgba(75,192,192,1)"
-                    )}
-                    options={chartOptions}
-                  />
-                </div>
-              </Col>
-
-              <Col md={6} className="mb-4">
-                <div className="bg-white rounded p-4 text-dark">
-                  <h5>Temperatura mínima</h5>
-                  <hr />
-                  <Line
-                    data={chartConfig(
-                      "Temperatura Mínima (°C)",
-                      data.tempMin,
-                      "rgba(192,75,75,1)"
-                    )}
-                    options={chartOptions}
-                  />
-                </div>
-              </Col>
+              <WeatherChart
+                title="Temperatura Máxima"
+                data={data.tempMax}
+                unit="°C"
+                chartOptions={chartOptions}
+                chartConfig={chartConfig}
+                days={selectedDays}
+                color="rgba(163, 36, 36, 1)"
+              />
+              <WeatherChart
+                title="Temperatura Mínima"
+                data={data.tempMin}
+                unit="°C"
+                chartOptions={chartOptions}
+                chartConfig={chartConfig}
+                days={selectedDays}
+                color="rgba(54, 227, 224, 1)"
+              />
             </Row>
             <Row>
-              <Col md={6} className="mb-4">
-                <div className="bg-white rounded p-4 text-dark">
-                  <h5>Precipitación</h5>
-                  <hr />
-                  <Line
-                    data={chartConfig(
-                      "Precipitación (mm)",
-                      data.precipitation,
-                      "rgba(75,75,192,1)"
-                    )}
-                    options={chartOptions}
-                  />
-                </div>
-              </Col>
-
-              <Col md={6} className="mb-4">
-                <div className="bg-white rounded p-4 text-dark">
-                  <h5>Radiación Solar</h5>
-                  <hr />
-                  <Line
-                    data={chartConfig(
-                      "Radiación Solar (MJ)",
-                      data.solRad,
-                      "rgba(192,192,75,1)"
-                    )}
-                    options={chartOptions}
-                  />
-                </div>
-              </Col>
+              <WeatherChart
+                title="Precipitación"
+                data={data.precipitation}
+                unit="mm"
+                chartOptions={chartOptions}
+                chartConfig={chartConfig}
+                days={selectedDays}
+                color="rgba(26, 51, 237, 1)"
+              />
+              <WeatherChart
+                title="Radiación Solar"
+                data={data.solRad}
+                unit="MJ"
+                chartOptions={chartOptions}
+                chartConfig={chartConfig}
+                days={selectedDays}
+                color="rgba(237, 185, 12, 1)"
+              />
             </Row>
           </>
         )}
