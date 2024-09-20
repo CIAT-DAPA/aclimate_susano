@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/aclimate_susano/static/css/main.e7fc7098.css",
-    "main.js": "/aclimate_susano/static/js/main.49050591.js",
+    "main.js": "/aclimate_susano/static/js/main.4a2c1deb.js",
     "static/js/453.b93acbb1.chunk.js": "/aclimate_susano/static/js/453.b93acbb1.chunk.js",
     "static/media/logo.png": "/aclimate_susano/static/media/logo.4e27fd7d9947997ac1a2.png",
     "static/media/bg-home.jpg": "/aclimate_susano/static/media/bg-home.b6581277b25be530daf6.jpg",
     "index.html": "/aclimate_susano/index.html",
     "main.e7fc7098.css.map": "/aclimate_susano/static/css/main.e7fc7098.css.map",
-    "main.49050591.js.map": "/aclimate_susano/static/js/main.49050591.js.map",
+    "main.4a2c1deb.js.map": "/aclimate_susano/static/js/main.4a2c1deb.js.map",
     "453.b93acbb1.chunk.js.map": "/aclimate_susano/static/js/453.b93acbb1.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e7fc7098.css",
-    "static/js/main.49050591.js"
+    "static/js/main.4a2c1deb.js"
   ]
 }
