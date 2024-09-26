@@ -1,7 +1,7 @@
 import axios from "axios";
 import Configuration from "../conf/Configuration";
 
-const NICARAGUA_ID = "651437a78a8437279ea6ca2c";
+const COUNTRY_ID = process.env.REACT_APP_COUNTRY_ID;
 
 // Create an Axios instance with the base URL
 const apiClient = axios.create({
@@ -15,7 +15,7 @@ class Services {
    * @throws Will throw an error if the request fails.
    */
   async getAllWeatherStations() {
-    const url = `/geographic/${NICARAGUA_ID}/WeatherStations/json`;
+    const url = `/geographic/${COUNTRY_ID}/WeatherStations/json`;
     try {
       const response = await apiClient.get(url);
       return response.data;

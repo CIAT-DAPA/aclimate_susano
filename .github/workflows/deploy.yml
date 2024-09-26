@@ -2,6 +2,8 @@ name: Build and Deploy
 on: [push]
 permissions:
   contents: write
+env:
+  REACT_APP_COUNTRY_ID: ${{secrets.REACT_APP_COUNTRY_ID}}
 jobs:
   build-and-deploy:
     concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
@@ -15,6 +17,7 @@ jobs:
           CI: false
         run: |
           cd ./src
+          echo "REACT_APP_COUNTRY_ID=${{env.REACT_APP_COUNTRY_ID}}" > .env
           npm ci
           npm run build
 

@@ -19,7 +19,7 @@ function Menu() {
             alt="Aclimate Monitoring Logo"
             className="d-inline-block align-top"
           />
-          Aclimate Monitoring
+          AClimate Monitoring
         </Link>
 
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />

@@ -211,6 +211,15 @@ const Dashboard = () => {
             </Col>
             <Row>
               <WeatherChart
+                title="Precipitación"
+                data={data.precipitation}
+                unit="mm"
+                chartOptions={chartOptions}
+                chartConfig={chartConfig}
+                days={selectedDays}
+                color="rgba(26, 51, 237, 1)"
+              />
+              <WeatherChart
                 title="Temperatura Máxima"
                 data={data.tempMax}
                 unit="°C"
@@ -219,6 +228,8 @@ const Dashboard = () => {
                 days={selectedDays}
                 color="rgba(163, 36, 36, 1)"
               />
+            </Row>
+            <Row>
               <WeatherChart
                 title="Temperatura Mínima"
                 data={data.tempMin}
@@ -227,17 +238,6 @@ const Dashboard = () => {
                 chartConfig={chartConfig}
                 days={selectedDays}
                 color="rgba(54, 227, 224, 1)"
-              />
-            </Row>
-            <Row>
-              <WeatherChart
-                title="Precipitación"
-                data={data.precipitation}
-                unit="mm"
-                chartOptions={chartOptions}
-                chartConfig={chartConfig}
-                days={selectedDays}
-                color="rgba(26, 51, 237, 1)"
               />
               <WeatherChart
                 title="Radiación Solar"
