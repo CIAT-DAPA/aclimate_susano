@@ -50,6 +50,28 @@ class Services {
       );
     }
   }
+
+  /**
+   * Fetches last daily weather data for a specific station.
+   * @param {Array} stationId - The IDs of the weather stations.
+   * @returns {Promise<Object>} A promise that resolves to the daily weather data.
+   * @throws Will throw an error if the request fails.
+   */
+  async getLastDailyWeather(stationsIds) {
+    const url = `/DailyWeatherData/LastDailyData/${stationsIds}/json`;
+    try {
+      const response = await apiClient.get(url);
+      return response.data;
+    } catch (error) {
+      console.error(
+        `Error fetching last daily weather for station ${stationsIds}:`,
+        error
+      );
+      throw new Error(
+        `Failed to fetch last daily weather for station ${stationsIds}. Please try again later.`
+      );
+    }
+  }
 }
 
 export default new Services();
