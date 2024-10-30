@@ -7,6 +7,7 @@ import { MapContainer, Marker, TileLayer, ZoomControl } from "react-leaflet";
 import L from "leaflet";
 import "./Dashboard.css";
 import WeatherChart from "../../components/weatherChart/WeatherChart";
+import { IconCalendarMonth } from "@tabler/icons-react";
 
 const Dashboard = () => {
   const [data, setData] = useState({
@@ -18,14 +19,15 @@ const Dashboard = () => {
   const [stations, setStations] = useState([]);
   const [currentStation, setCurrentStation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedDays, setSelectedDays] = useState(7);
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
   const { idWS } = useParams();
   const navigate = useNavigate();
 
-  const iconMarker = new L.Icon({
+  const iconMarker = useMemo(() => new L.Icon({
     iconUrl: require("../../assets/img/marker.png"),
     iconSize: [48, 48],
-  });
+  }), []);
 
   useEffect(() => {
     const fetchStations = async () => {
@@ -52,12 +54,23 @@ const Dashboard = () => {
       if (!currentStation) return;
       setIsLoading(true);
       try {
-        const response = await Services.getDailyWeather(12, 2022, idWS);
-        const parsedData = parseWeatherData(
-          response.daily_readings,
-          response.month,
-          response.year
+        const lastDataAvailable = await Services.getLastDailyWeather(idWS);
+        const formattedEndDate = new Date(lastDataAvailable[0].date)
+          .toISOString()
+          .split("T")[0];
+        setEndDate(formattedEndDate);
+
+        const startDate = new Date(lastDataAvailable[0].date);
+        startDate.setDate(startDate.getDate() - 7);
+        const formattedStartDate = startDate.toISOString().split("T")[0];
+        setStartDate(formattedStartDate);
+
+        const response = await Services.getDailyWeather(
+          formattedStartDate,
+          formattedEndDate,
+          idWS
         );
+        const parsedData = parseWeatherData(response.daily_data);
         setData(parsedData);
       } catch (error) {
         console.error("Error fetching daily weather data:", error);
@@ -68,7 +81,28 @@ const Dashboard = () => {
     fetchData();
   }, [currentStation, idWS]);
 
-  const parseWeatherData = (readings, month, year) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!currentStation || !startDate || !endDate) return;
+      setIsLoading(true);
+      try {
+        const response = await Services.getDailyWeather(
+          startDate,
+          endDate,
+          idWS
+        );
+        const parsedData = parseWeatherData(response.daily_data);
+        setData(parsedData);
+      } catch (error) {
+        console.error("Error fetching daily weather data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [startDate, endDate, currentStation, idWS]);
+
+  const parseWeatherData = (readings) => {
     const result = {
       tempMax: [],
       tempMin: [],
@@ -77,7 +111,7 @@ const Dashboard = () => {
     };
 
     readings.forEach((reading) => {
-      const dayLabel = `${reading.day}/${month}/${year}`;
+      const dayLabel = `${reading.date}`;
       result.tempMax.push({
         label: dayLabel,
         value:
@@ -111,9 +145,9 @@ const Dashboard = () => {
     setCurrentStation(station);
   };
 
-  const handleDaysChange = (event) => {
-    const value = event.target.value;
-    setSelectedDays(value === "" ? 7 : parseInt(value, 10));
+  const handleStartDateChange = (e) => {
+    const newStartDate = e.target.value;
+    setStartDate(newStartDate);
   };
 
   const chartConfig = (label, data, color) => ({
@@ -155,16 +189,39 @@ const Dashboard = () => {
         ) : (
           <>
             <Col className="bg-white rounded p-4 my-2 text-dark">
-              <div className="d-flex justify-content-between mb-2">
-                <Form.Select
-                  aria-label="Periodo de tiempo"
-                  className="w-auto"
-                  onChange={handleDaysChange}
-                >
-                  <option value="7">Últimos 7 días</option>
-                  <option value="15">Últimos 15 días</option>
-                  <option value="30">Últimos 30 días</option>
-                </Form.Select>
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <Form.Group className="d-flex">
+                  <div className="d-flex flex-column">
+                    <Form.Label className="me-2">
+                      {" "}
+                      <IconCalendarMonth className="me-2" /> Fecha de inicio:
+                    </Form.Label>
+                    <Form.Control
+                      type="date"
+                      aria-label="Fecha de inicio"
+                      className="me-2"
+                      value={startDate}
+                      onChange={handleStartDateChange}
+                      max={endDate}
+                    />
+                  </div>
+                  <div className="d-flex flex-column pb-2 justify-content-end mx-3">
+                    -
+                  </div>
+                  <div className="d-flex flex-column">
+                    <Form.Label className="me-2">
+                      {" "}
+                      <IconCalendarMonth className="me-2" />
+                      Fecha de fin:
+                    </Form.Label>
+                    <Form.Control
+                      type="date"
+                      aria-label="Fecha de fin"
+                      value={endDate}
+                      disabled
+                    />
+                  </div>
+                </Form.Group>
                 <Button variant="primary text-light">
                   Comparar con datos satelitales
                 </Button>
@@ -216,7 +273,6 @@ const Dashboard = () => {
                 unit="mm"
                 chartOptions={chartOptions}
                 chartConfig={chartConfig}
-                days={selectedDays}
                 color="rgba(26, 51, 237, 1)"
               />
               <WeatherChart
@@ -225,7 +281,6 @@ const Dashboard = () => {
                 unit="°C"
                 chartOptions={chartOptions}
                 chartConfig={chartConfig}
-                days={selectedDays}
                 color="rgba(163, 36, 36, 1)"
               />
             </Row>
@@ -236,7 +291,6 @@ const Dashboard = () => {
                 unit="°C"
                 chartOptions={chartOptions}
                 chartConfig={chartConfig}
-                days={selectedDays}
                 color="rgba(54, 227, 224, 1)"
               />
               <WeatherChart
@@ -245,7 +299,6 @@ const Dashboard = () => {
                 unit="MJ"
                 chartOptions={chartOptions}
                 chartConfig={chartConfig}
-                days={selectedDays}
                 color="rgba(237, 185, 12, 1)"
               />
             </Row>

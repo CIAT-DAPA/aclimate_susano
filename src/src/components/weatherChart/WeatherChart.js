@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Col } from "react-bootstrap";
 import { Line } from "react-chartjs-2";
 import {
@@ -28,19 +28,27 @@ const WeatherChart = ({
   unit,
   chartOptions,
   chartConfig,
-  days,
   color,
 }) => {
-  const filteredData = data.slice(-days);
+  const maxItem = useMemo(
+    () =>
+      data.reduce(
+        (max, item) => (item.value > max.value ? item : max),
+        data[0] || { label: "N/A", value: 0 }
+      ),
+    [data]
+  );
 
-  const maxItem = filteredData.reduce(
-    (max, item) => (item.value > max.value ? item : max),
-    filteredData[0] || { label: "N/A", value: 0 }
+  const minItem = useMemo(
+    () =>
+      data.reduce(
+        (min, item) => (item.value < min.value ? item : min),
+        data[0] || { label: "N/A", value: 0 }
+      ),
+    [data]
   );
-  const minItem = filteredData.reduce(
-    (min, item) => (item.value < min.value ? item : min),
-    filteredData[0] || { label: "N/A", value: 0 }
-  );
+
+  const formatLabel = (label) => label.split("T")[0];
 
   return (
     <Col lg={6} className="mb-4">
@@ -49,14 +57,15 @@ const WeatherChart = ({
         <hr />
         <p>
           La gráfica muestra la evolución de {title.toLowerCase()} registrada en
-          la estación meteorológica durante los <b>{days} últimos</b> días. En
-          ella se destaca que el día con la {title.toLowerCase()} más alta fue
-          el <b>{maxItem.label}</b>, alcanzando un máximo de{" "}
+          la estación meteorológica durante los{" "}
+          <b>últimos {data.length} días</b>. En ella se destaca que el día con
+          la {title.toLowerCase()} más alta fue el{" "}
+          <b>{formatLabel(maxItem.label)}</b>, alcanzando un máximo de{" "}
           <b>
             {maxItem.value.toFixed(2)} {unit}
           </b>
           , mientras que el día con la {title.toLowerCase()} más baja fue el{" "}
-          <b>{minItem.label}</b>, con una {title.toLowerCase()} de{" "}
+          <b>{formatLabel(minItem.label)}</b>, con una {title.toLowerCase()} de{" "}
           <b>
             {minItem.value.toFixed(2)} {unit}
           </b>
@@ -64,10 +73,7 @@ const WeatherChart = ({
           {title.toLowerCase()} y ofrece una referencia clara para identificar
           patrones climáticos recientes en la región.
         </p>
-        <Line
-          data={chartConfig(title, filteredData, `${color}`)}
-          options={chartOptions}
-        />
+        <Line data={chartConfig(title, data, color)} options={chartOptions} />
       </div>
     </Col>
   );

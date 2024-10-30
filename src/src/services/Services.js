@@ -29,14 +29,14 @@ class Services {
 
   /**
    * Fetches daily weather data for a specific station.
-   * @param {number} month - The month for which to fetch data.
-   * @param {number} year - The year for which to fetch data.
+   * @param {number} startDate - The start date for which to fetch data.
+   * @param {number} endDate - The end date for which to fetch data.
    * @param {string} stationId - The ID of the weather station.
    * @returns {Promise<Object>} A promise that resolves to the daily weather data.
    * @throws Will throw an error if the request fails.
    */
-  async getDailyWeather(month, year, stationId) {
-    const url = `/DailyWeatherData/Climatology/${stationId}/json?year=${year}&month=${month}`;
+  async getDailyWeather(startDate, endDate, stationId) {
+    const url = `/DailyWeatherData/Climatology/${stationId}/json?startDate=${startDate}&endDate=${endDate}`;
     try {
       const response = await apiClient.get(url);
       return response.data;
