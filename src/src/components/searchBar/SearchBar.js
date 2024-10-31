@@ -53,7 +53,7 @@ function SearchBar({ stations, onStationClick, bigSize, dashboard }) {
       </div>
 
       {filterText.length >= 3 && (
-        <div className="bg-white stations-search px-3 py-1 position-absolute w-100">
+        <div className="bg-white stations-search px-3 py-1 position-absolute">
           {filteredStations.map((station) => (
             <div
               className="py-1 small hint-div text-capitalize text-dark"

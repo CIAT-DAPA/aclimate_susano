@@ -19,15 +19,20 @@ const Dashboard = () => {
   const [stations, setStations] = useState([]);
   const [currentStation, setCurrentStation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isChartLoading, setIsChartLoading] = useState(false);
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const { idWS } = useParams();
   const navigate = useNavigate();
 
-  const iconMarker = useMemo(() => new L.Icon({
-    iconUrl: require("../../assets/img/marker.png"),
-    iconSize: [48, 48],
-  }), []);
+  const iconMarker = useMemo(
+    () =>
+      new L.Icon({
+        iconUrl: require("../../assets/img/marker.png"),
+        iconSize: [48, 48],
+      }),
+    []
+  );
 
   useEffect(() => {
     const fetchStations = async () => {
@@ -84,7 +89,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!currentStation || !startDate || !endDate) return;
-      setIsLoading(true);
+      setIsChartLoading(true);
       try {
         const response = await Services.getDailyWeather(
           startDate,
@@ -96,7 +101,7 @@ const Dashboard = () => {
       } catch (error) {
         console.error("Error fetching daily weather data:", error);
       } finally {
-        setIsLoading(false);
+        setIsChartLoading(false);
       }
     };
     fetchData();
@@ -111,7 +116,7 @@ const Dashboard = () => {
     };
 
     readings.forEach((reading) => {
-      const dayLabel = `${reading.date}`;
+      const dayLabel = `${reading.date.split("T")[0]}`;
       result.tempMax.push({
         label: dayLabel,
         value:
@@ -171,6 +176,21 @@ const Dashboard = () => {
       },
     }),
     []
+  );
+
+  const precipitationChartOptions = useMemo(
+    () => ({
+      ...chartOptions,
+      scales: {
+        ...chartOptions.scales,
+        y: {
+          ...chartOptions.scales.y,
+          beginAtZero: true,
+          min: 0,
+        },
+      },
+    }),
+    [chartOptions]
   );
 
   return (
@@ -271,9 +291,10 @@ const Dashboard = () => {
                 title="Precipitación"
                 data={data.precipitation}
                 unit="mm"
-                chartOptions={chartOptions}
+                chartOptions={precipitationChartOptions}
                 chartConfig={chartConfig}
                 color="rgba(26, 51, 237, 1)"
+                isChartLoading={isChartLoading}
               />
               <WeatherChart
                 title="Temperatura Máxima"
@@ -282,6 +303,7 @@ const Dashboard = () => {
                 chartOptions={chartOptions}
                 chartConfig={chartConfig}
                 color="rgba(163, 36, 36, 1)"
+                isChartLoading={isChartLoading}
               />
             </Row>
             <Row>
@@ -292,6 +314,7 @@ const Dashboard = () => {
                 chartOptions={chartOptions}
                 chartConfig={chartConfig}
                 color="rgba(54, 227, 224, 1)"
+                isChartLoading={isChartLoading}
               />
               <WeatherChart
                 title="Radiación Solar"
@@ -300,6 +323,7 @@ const Dashboard = () => {
                 chartOptions={chartOptions}
                 chartConfig={chartConfig}
                 color="rgba(237, 185, 12, 1)"
+                isChartLoading={isChartLoading}
               />
             </Row>
           </>
