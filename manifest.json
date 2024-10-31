@@ -1,6 +1,6 @@
 {
   "short_name": "Aclimate Monitoring",
-  "name": "Create React App Sample",
+  "name": "Aclimate monitoring es una herramienta para poder visualizar las distintas estaciones climatologicas de la región de Nicaragua",
   "icons": [
     {
       "src": "favicon.ico",
