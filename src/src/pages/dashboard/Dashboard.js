@@ -22,6 +22,7 @@ const Dashboard = () => {
   const [isChartLoading, setIsChartLoading] = useState(false);
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
+  const [endDataDate, setEndDataDate] = useState();
   const { idWS } = useParams();
   const navigate = useNavigate();
 
@@ -64,6 +65,7 @@ const Dashboard = () => {
           .toISOString()
           .split("T")[0];
         setEndDate(formattedEndDate);
+        setEndDataDate(formattedEndDate);
 
         const startDate = new Date(lastDataAvailable[0].date);
         startDate.setDate(startDate.getDate() - 7);
@@ -155,6 +157,11 @@ const Dashboard = () => {
     setStartDate(newStartDate);
   };
 
+  const handleEndDateChange = (e) => {
+    const newEndDate = e.target.value;
+    setEndDate(newEndDate);
+  };
+
   const chartConfig = (label, data, color) => ({
     labels: data.map((item) => item.label),
     datasets: [
@@ -238,7 +245,9 @@ const Dashboard = () => {
                       type="date"
                       aria-label="Fecha de fin"
                       value={endDate}
-                      disabled
+                      onChange={handleEndDateChange}
+                      min={startDate}
+                      max={endDataDate}
                     />
                   </div>
                 </Form.Group>

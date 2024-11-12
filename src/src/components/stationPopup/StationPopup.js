@@ -52,7 +52,7 @@ function StationPopup({ station, lastData }) {
             aria-label="Data"
           >
             <IconChartDonut stroke={2} className="me-2" />
-            Data
+            Datos
           </Link>
         </div>
       </Popup>

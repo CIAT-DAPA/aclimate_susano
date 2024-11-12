@@ -34,10 +34,10 @@ function Footer() {
               <ul className="nav flex-column">
                 <li className="nav-item mb-2 item-footer">
                   <a
-                    href="mailto: J.R.Villegas@cgiar.org"
+                    href="mailto: a.i.martinez@cgiar.org"
                     className="nav-link text-light"
                   >
-                    J.R.Villegas@cgiar.org
+                    A.i.martinez@cgiar.org
                   </a>
                 </li>
               </ul>
