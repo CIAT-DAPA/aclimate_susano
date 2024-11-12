@@ -15,10 +15,32 @@ class Services {
    * @throws Will throw an error if the request fails.
    */
   async getAllWeatherStations() {
-    const url = `/geographic/${COUNTRY_ID}/WeatherStations/json`;
+    const url = `/geographic/${COUNTRY_ID}/json`;
     try {
       const response = await apiClient.get(url);
-      return response.data;
+      const data = response.data;
+
+      // Flatten the response to extract the weather stations
+      const weatherStations = [];
+
+      data.forEach((state) => {
+        const stateName = state.name;
+
+        state.municipalities.forEach((municipality) => {
+          const municipalityName = municipality.name;
+
+          municipality.weather_stations.forEach((station) => {
+            // Add municipality and state to each weather station
+            weatherStations.push({
+              ...station,
+              municipality: municipalityName,
+              state: stateName,
+            });
+          });
+        });
+      });
+
+      return weatherStations;
     } catch (error) {
       console.error("Error fetching weather stations:", error);
       throw new Error(

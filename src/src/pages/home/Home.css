@@ -7,10 +7,10 @@
     url("../../assets/img/bg-home.jpg");
   background-size: cover;
   background-position: center;
-  min-height: 80vh;
+  min-height: 90vh;
 }
 
-.container-header {
+/* .container-header {
   position: relative;
   top: 150px;
-}
+} */

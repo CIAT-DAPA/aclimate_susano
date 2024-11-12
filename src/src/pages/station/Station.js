@@ -34,7 +34,7 @@ function Station() {
       try {
         const response = await Services.getAllWeatherStations();
         const filteredStations = response.filter(
-          (item) => item.origin === "CHIRPS y ERA-5"
+          (item) => item.origin === "WEATHERLINK"
         );
         setStations(filteredStations);
       } catch (error) {

@@ -41,7 +41,7 @@ const Dashboard = () => {
       try {
         const response = await Services.getAllWeatherStations();
         const filteredStations = response.filter(
-          (item) => item.origin === "CHIRPS y ERA-5"
+          (item) => item.origin === "WEATHERLINK"
         );
         const station = filteredStations.find((item) => item.id === idWS);
         setStations(filteredStations);
