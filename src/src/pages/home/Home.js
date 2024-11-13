@@ -18,6 +18,7 @@ const Home = () => {
 
   const [stations, setStations] = useState([]);
   const [nearestStation, setNearestStation] = useState(null);
+  const [favoriteStation, setFavoriteStation] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -66,8 +67,22 @@ const Home = () => {
       }
     };
 
+    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    if (favorites.length > 0) {
+      setFavoriteStation(
+        stations.find((station) => station.id === favorites[0])
+      );
+      return;
+    }
     getUserLocation();
   }, [stations]);
+
+  // useEffect(() => {
+  //   const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  //   if (favorites.length > 0) {
+  //     setFavoriteStation(favorites[0]);
+  //   }
+  // }, []);
 
   return (
     <div>
@@ -96,7 +111,7 @@ const Home = () => {
             <StationCard
               loading={loading}
               msgError={error}
-              station={nearestStation}
+              station={favoriteStation || nearestStation}
             />
           </Row>
         </Container>

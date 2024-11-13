@@ -14,7 +14,8 @@ function StationCard({ loading, msgError, station }) {
     const fetchLastDailyWeather = async () => {
       try {
         const response = await Services.getLastDailyWeather(station.id);
-        setLastDataStation(response);
+        console.log("response", response[0]);
+        setLastDataStation(response[0]);
       } catch (error) {
         console.error(
           "Error al cargar la última información de las estaciones:",
@@ -83,12 +84,13 @@ function StationCard({ loading, msgError, station }) {
                           .find((item) => item.measure === "t_min")
                           ?.value.toFixed(1) ?? "N/A"
                       : "N/A"}{" "}
-                    -{" "}
+                    °C -{" "}
                     {lastDataStation?.climaticData
                       ? lastDataStation.climaticData
                           .find((item) => item.measure === "t_max")
                           ?.value.toFixed(1) ?? "N/A"
-                      : "N/A"}
+                      : "N/A"}{" "}
+                    °C
                   </span>
                 </div>
                 <div className="d-flex flex-column gap-1">
@@ -106,7 +108,7 @@ function StationCard({ loading, msgError, station }) {
               </div>
               <div className="d-flex flex-column justify-content-between align-items-end">
                 <div className="d-flex flex-column align-items-end">
-                  <span>
+                  <span className="text-capitalize">
                     {lastDataStation?.date
                       ? getDayOfWeek(lastDataStation.date)
                       : "N/A"}
@@ -114,7 +116,7 @@ function StationCard({ loading, msgError, station }) {
                   <span>{lastDataStation?.date ?? "N/A"}</span>
                 </div>
                 <div>
-                  <span>
+                  <span className="text-capitalize">
                     <IconMapPin size={24} className="me-2" />
                     {station.municipality}, {station.state}
                   </span>
