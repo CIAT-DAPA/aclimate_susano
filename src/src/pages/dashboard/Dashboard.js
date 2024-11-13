@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import { Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import SearchBar from "../../components/searchBar/SearchBar";
 import Services from "../../services/Services";
@@ -7,6 +7,7 @@ import { MapContainer, Marker, TileLayer, ZoomControl } from "react-leaflet";
 import L from "leaflet";
 import "./Dashboard.css";
 import WeatherChart from "../../components/weatherChart/WeatherChart";
+import FloatingButton from "../../components/floatingButton/FloatingButton.js";
 import { IconCalendarMonth } from "@tabler/icons-react";
 
 const Dashboard = () => {
@@ -23,6 +24,7 @@ const Dashboard = () => {
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const [endDataDate, setEndDataDate] = useState();
+  const [isFavorite, setIsFavorite] = useState(false);
   const { idWS } = useParams();
   const navigate = useNavigate();
 
@@ -109,6 +111,13 @@ const Dashboard = () => {
     fetchData();
   }, [startDate, endDate, currentStation, idWS]);
 
+  useEffect(() => {
+    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    setIsFavorite(
+      favorites.some((stationId) => stationId === currentStation?.id)
+    );
+  }, [currentStation]);
+
   const parseWeatherData = (readings) => {
     const result = {
       tempMax: [],
@@ -160,6 +169,39 @@ const Dashboard = () => {
   const handleEndDateChange = (e) => {
     const newEndDate = e.target.value;
     setEndDate(newEndDate);
+  };
+
+  const downloadAllData = () => {
+    const csvData = [
+      ["Date", "Temp Max", "Temp Min", "Precipitation", "Solar Radiation"],
+      ...data.tempMax.map((item, index) => [
+        item.label,
+        item.value,
+        data.tempMin[index]?.value ?? "N/A",
+        data.precipitation[index]?.value ?? "N/A",
+        data.solRad[index]?.value ?? "N/A",
+      ]),
+    ];
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      csvData.map((e) => e.join(",")).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute(
+      "download",
+      `${currentStation?.name.toLowerCase()}_weather_data.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const saveFavorite = () => {
+    const favorites = [];
+    favorites.push(currentStation.id);
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+    setIsFavorite(true);
   };
 
   const chartConfig = (label, data, color) => ({
@@ -251,9 +293,6 @@ const Dashboard = () => {
                     />
                   </div>
                 </Form.Group>
-                <Button variant="primary text-light">
-                  Comparar con datos satelitales
-                </Button>
               </div>
 
               <h4 className="mb-0">{currentStation?.name}</h4>
@@ -323,7 +362,7 @@ const Dashboard = () => {
                 unit="°C"
                 chartOptions={chartOptions}
                 chartConfig={chartConfig}
-                color="rgba(54, 227, 224, 1)"
+                color="rgba(184, 84, 13, 1)"
                 isChartLoading={isChartLoading}
               />
               <WeatherChart
@@ -336,6 +375,13 @@ const Dashboard = () => {
                 isChartLoading={isChartLoading}
               />
             </Row>
+            <FloatingButton
+              type="favorite"
+              onClick={saveFavorite}
+              isFavorite={isFavorite}
+            />
+            <FloatingButton type="download" onClick={downloadAllData} />
+            <FloatingButton type="compare" onClick={() => alert("Comparar")} />
           </>
         )}
       </Container>

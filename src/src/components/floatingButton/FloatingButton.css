@@ -1,0 +1,17 @@
+.btn-floating-compare {
+    right: 23px;
+    bottom: 23px;
+    z-index: 1000;
+}
+
+.btn-floating-download {
+    right: 23px;
+    bottom: 73px;
+    z-index: 1000;
+}
+
+.btn-floating-favorite {
+    right: 23px;
+    bottom: 123px;
+    z-index: 1000;
+}

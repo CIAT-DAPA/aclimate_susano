@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Col, Spinner } from "react-bootstrap";
+import { Button, Col, Spinner } from "react-bootstrap";
 import { Line } from "react-chartjs-2";
 import {
   Chart,
@@ -12,6 +12,7 @@ import {
   Legend,
 } from "chart.js";
 import noDataImage from "../../assets/img/no-data.jpg";
+import { IconDownload } from "@tabler/icons-react";
 
 Chart.register(
   CategoryScale,
@@ -54,8 +55,25 @@ const WeatherChart = ({
 
   const allDataZero = data.every((item) => item.value === 0);
 
+  const downloadCSV = () => {
+    const csvData = [
+      ["Date", "Value"],
+      ...data.map((item) => [item.label, item.value]),
+    ];
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      csvData.map((e) => e.join(",")).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${title.toLowerCase()}_data.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
-    <Col lg={6} className="mb-4 ">
+    <Col lg={6} className="mb-4">
       <div className="bg-white rounded p-4 text-dark h-100">
         {isChartLoading ? (
           <div className="text-center my-5">
@@ -64,7 +82,22 @@ const WeatherChart = ({
           </div>
         ) : (
           <>
-            <h5>{title}</h5>
+            <div className="d-flex justify-content-between align-items-center">
+              <h5>{title}</h5>
+              <Button
+                variant="primary"
+                className="text-white"
+                onClick={downloadCSV}
+                disabled={
+                  data.length === 0 ||
+                  data.every((item) => item.value === null) ||
+                  allDataZero
+                }
+              >
+                <IconDownload className="me-2" size={20} />
+                Descargar Datos
+              </Button>
+            </div>
             <hr />
             {data.length === 0 || data.every((item) => item.value === null) ? (
               <div className="h-75 d-flex flex-column justify-content-between">
