@@ -31,13 +31,19 @@ function StationPopup({ station, lastData }) {
       <Popup closeButton={false} className="popup">
         <div className="text-dark">
           <div className="d-flex align-items-center justify-content-between">
-            <h6 className="fw-medium mb-0 text-nowrap">
-              Estación {station.name}
+            <h6 className="fw-medium mb-0 text-nowrap text-capitalize">
+              {station.name}
             </h6>
           </div>
-          <p className="mt-0 mb-2">Fecha: {lastData?.date ?? "N/A"}</p>
+          <p className="my-0">Fuente: WeatherLink</p>
+          <p className="mt-0 mb-1">Fecha: {lastData?.date ?? "N/A"}</p>
         </div>
         <table className="fs-6 text-nowrap w-100 text-dark">
+          <thead>
+            <tr>
+              <th className="fw-semibold">Resumen de los datos</th>
+            </tr>
+          </thead>
           <tbody>
             {renderClimaticData("Temperatura máxima", "t_max", "°C")}
             {renderClimaticData("Temperatura mínima", "t_min", "°C")}

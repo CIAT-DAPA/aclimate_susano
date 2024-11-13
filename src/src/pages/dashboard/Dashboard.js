@@ -256,7 +256,8 @@ const Dashboard = () => {
                 </Button>
               </div>
 
-              <h4>{currentStation?.name}</h4>
+              <h4 className="mb-0">{currentStation?.name}</h4>
+              <p className="text-muted ">Fuente: WeatherLink</p>
               <hr />
               <p>
                 La estación meteorológica <b>{currentStation?.name}</b> está
