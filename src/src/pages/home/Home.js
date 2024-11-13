@@ -10,14 +10,14 @@ import {
 } from "@tabler/icons-react";
 import StationCard from "../../components/stationCard/StationCard";
 import Services from "../../services/Services";
+import { findNearestStation } from "../../utils/Utilities";
 
-function Home() {
-  // Definir colores en una variable para facilitar ajustes globales
+const Home = () => {
   const green = "green";
   const white = "white";
 
   const [stations, setStations] = useState([]);
-  const [nearestStation, setNearestStation] = useState([]);
+  const [nearestStation, setNearestStation] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -47,11 +47,15 @@ function Home() {
           (position) => {
             const userLat = position.coords.latitude;
             const userLon = position.coords.longitude;
-            findNearestStation(userLat, userLon);
+            const nearest = findNearestStation(userLat, userLon, stations);
+            setNearestStation(nearest);
+            setLoading(false);
           },
           (error) => {
             console.error("Error al obtener la ubicación del usuario:", error);
-            setError("Error al obtener la ubicación del usuario");
+            setError(
+              "Error al obtener la ubicación del usuario, por favor activa la geolocalización en tu navegador y si ya esta activa, intenta en otro navegador."
+            );
             setLoading(false);
           }
         );
@@ -62,45 +66,6 @@ function Home() {
       }
     };
 
-    const findNearestStation = (userLat, userLon) => {
-      let minDistance = Infinity;
-      let nearest = null;
-
-      stations.forEach((station) => {
-        const distance = getDistanceFromLatLonInKm(
-          userLat,
-          userLon,
-          station.latitude,
-          station.longitude
-        );
-        if (distance < minDistance) {
-          minDistance = distance;
-          nearest = station;
-        }
-      });
-
-      setNearestStation(nearest);
-      setLoading(false);
-    };
-
-    const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
-      const R = 6371; // Radio de la Tierra en km
-      const dLat = deg2rad(lat2 - lat1);
-      const dLon = deg2rad(lon2 - lon1);
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(deg2rad(lat1)) *
-          Math.cos(deg2rad(lat2)) *
-          Math.sin(dLon / 2) *
-          Math.sin(dLon / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      const distance = R * c; // Distancia en km
-      return distance;
-    };
-
-    const deg2rad = (deg) => {
-      return deg * (Math.PI / 180);
-    };
     getUserLocation();
   }, [stations]);
 
@@ -127,8 +92,12 @@ function Home() {
               </Link>
             </Col>
           </Row>
-          <Row className="mt-4 justify-content-around gy-4">
-            <StationCard loading={loading} msgError={error} station={nearestStation} />
+          <Row className="mt-4 gy-4">
+            <StationCard
+              loading={loading}
+              msgError={error}
+              station={nearestStation}
+            />
           </Row>
         </Container>
       </div>
@@ -156,6 +125,6 @@ function Home() {
       </Row>
     </div>
   );
-}
+};
 
 export default Home;

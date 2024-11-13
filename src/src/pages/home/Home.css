@@ -1,10 +1,10 @@
 .header-bg {
   background: linear-gradient(
-      180deg,
+      270deg,
       rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.199) 100%
+      rgba(40, 54, 24, 0.76) 100%
     ),
-    url("../../assets/img/bg-home.jpg");
+    url("../../assets/img/bg-home1.jpg");
   background-size: cover;
   background-position: center;
   min-height: 90vh;
