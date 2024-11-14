@@ -1,18 +1,18 @@
 {
   "files": {
     "main.css": "/aclimate_susano/static/css/main.c94ac995.css",
-    "main.js": "/aclimate_susano/static/js/main.24430a2e.js",
+    "main.js": "/aclimate_susano/static/js/main.c8fecd45.js",
     "static/js/453.b93acbb1.chunk.js": "/aclimate_susano/static/js/453.b93acbb1.chunk.js",
     "static/media/logo.png": "/aclimate_susano/static/media/logo.4e27fd7d9947997ac1a2.png",
     "static/media/bg-home1.jpg": "/aclimate_susano/static/media/bg-home1.f0210149397ded0505d2.jpg",
     "static/media/no-data.jpg": "/aclimate_susano/static/media/no-data.28eb5a7d6b2cdf92dd66.jpg",
     "index.html": "/aclimate_susano/index.html",
     "main.c94ac995.css.map": "/aclimate_susano/static/css/main.c94ac995.css.map",
-    "main.24430a2e.js.map": "/aclimate_susano/static/js/main.24430a2e.js.map",
+    "main.c8fecd45.js.map": "/aclimate_susano/static/js/main.c8fecd45.js.map",
     "453.b93acbb1.chunk.js.map": "/aclimate_susano/static/js/453.b93acbb1.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c94ac995.css",
-    "static/js/main.24430a2e.js"
+    "static/js/main.c8fecd45.js"
   ]
 }
