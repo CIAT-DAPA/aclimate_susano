@@ -35,7 +35,7 @@ const WeatherChart = ({
 }) => {
   const adjustColorOpacity = (color, opacity) => {
     const rgba = color.replace(
-      /rgba?\((\d+), ?(\d+), ?(\d+),? ?([\d\.]*)\)/,
+      /rgba?\((\d+), ?(\d+), ?(\d+),? ?([\d.]*)\)/,
       (match, r, g, b, a) => {
         return `rgba(${r},${g},${b},${opacity})`;
       }
@@ -82,7 +82,7 @@ const WeatherChart = ({
     document.body.removeChild(link);
   };
 
-  const chartConfig = (label, data, color, dataSpatial, spatialColor) => ({
+  const chartConfig = (label, data, color, dataSpatial) => ({
     labels: data.map((item) => item.label),
     datasets: [
       {
@@ -98,7 +98,7 @@ const WeatherChart = ({
               label: `Datos satelitales`,
               data: dataSpatial.map((item) => item.value),
               fill: false,
-              borderColor: spatialColor,
+              borderColor: adjustColorOpacity(color, 0.5),
               tension: 0.1,
             },
           ]
@@ -199,13 +199,7 @@ const WeatherChart = ({
                   identificar patrones climáticos recientes en la región.
                 </p>
                 <Line
-                  data={chartConfig(
-                    "Datos estación",
-                    data,
-                    color,
-                    dataSpatial,
-                    adjustColorOpacity(color, 0.5)
-                  )}
+                  data={chartConfig("Datos estación", data, color, dataSpatial)}
                   options={
                     startAtZero ? ChartOptionsStartedAtZero : chartOptions
                   }
