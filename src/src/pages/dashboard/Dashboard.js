@@ -19,11 +19,13 @@ const Dashboard = () => {
   });
   const [stations, setStations] = useState([]);
   const [currentStation, setCurrentStation] = useState(null);
+  const [currentStationSpacial, setCurrentStationSpacial] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isChartLoading, setIsChartLoading] = useState(false);
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const [endDataDate, setEndDataDate] = useState();
+  const [endDataSpacialDate, setEndDataSpacialDate] = useState();
   const [isFavorite, setIsFavorite] = useState(false);
   const { idWS } = useParams();
   const navigate = useNavigate();
@@ -45,9 +47,16 @@ const Dashboard = () => {
         const filteredStations = response.filter(
           (item) => item.origin === "WEATHERLINK"
         );
+        const filteredStationsSpacial = response.filter(
+          (item) => item.origin === "CHIRPS y AgERA-5"
+        );
         const station = filteredStations.find((item) => item.id === idWS);
+        const stationSpacial = filteredStationsSpacial.find(
+          (item) => item.ext_id === station.ext_id + "_h"
+        );
         setStations(filteredStations);
         setCurrentStation(station);
+        setCurrentStationSpacial(stationSpacial);
       } catch (error) {
         console.error("Error fetching weather stations:", error);
       } finally {
@@ -68,6 +77,16 @@ const Dashboard = () => {
           .split("T")[0];
         setEndDate(formattedEndDate);
         setEndDataDate(formattedEndDate);
+
+        const lastDataSpacialAvailable = await Services.getLastDailyWeather(
+          currentStationSpacial.id
+        );
+        const formattedSpacialEndDate = new Date(
+          lastDataSpacialAvailable[0].date
+        )
+          .toISOString()
+          .split("T")[0];
+        setEndDataSpacialDate(formattedSpacialEndDate);
 
         const startDate = new Date(lastDataAvailable[0].date);
         startDate.setDate(startDate.getDate() - 7);
@@ -204,6 +223,8 @@ const Dashboard = () => {
     setIsFavorite(true);
   };
 
+  const compareData = () => {};
+
   const chartConfig = (label, data, color) => ({
     labels: data.map((item) => item.label),
     datasets: [
@@ -243,8 +264,8 @@ const Dashboard = () => {
   );
 
   return (
-    <div>
-      <Container fluid className="p-3 bg-dashboard">
+    <div className="bg-dashboard">
+      <Container className="p-3 bg-dashboard">
         <SearchBar
           stations={stations}
           onStationClick={handleStationClick}
@@ -258,55 +279,60 @@ const Dashboard = () => {
         ) : (
           <>
             <Col className="bg-white rounded p-4 my-2 text-dark">
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <Form.Group className="d-flex">
-                  <div className="d-flex flex-column">
-                    <Form.Label className="me-2">
-                      {" "}
-                      <IconCalendarMonth className="me-2" /> Fecha de inicio:
-                    </Form.Label>
-                    <Form.Control
-                      type="date"
-                      aria-label="Fecha de inicio"
-                      className="me-2"
-                      value={startDate}
-                      onChange={handleStartDateChange}
-                      max={endDate}
-                    />
-                  </div>
-                  <div className="d-flex flex-column pb-2 justify-content-end mx-3">
-                    -
-                  </div>
-                  <div className="d-flex flex-column">
-                    <Form.Label className="me-2">
-                      {" "}
-                      <IconCalendarMonth className="me-2" />
-                      Fecha de fin:
-                    </Form.Label>
-                    <Form.Control
-                      type="date"
-                      aria-label="Fecha de fin"
-                      value={endDate}
-                      onChange={handleEndDateChange}
-                      min={startDate}
-                      max={endDataDate}
-                    />
-                  </div>
-                </Form.Group>
+              <div className="d-flex justify-content-between">
+                <div>
+                  <h1 className="mb-0">{currentStation?.name}</h1>
+                  <p className="text-muted ">Fuente: WeatherLink</p>
+                </div>
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <Form.Group className="d-flex">
+                    <div className="d-flex flex-column">
+                      <Form.Label className="me-2">
+                        {" "}
+                        <IconCalendarMonth className="me-2" /> Fecha de inicio:
+                      </Form.Label>
+                      <Form.Control
+                        type="date"
+                        aria-label="Fecha de inicio"
+                        className="me-2"
+                        value={startDate}
+                        onChange={handleStartDateChange}
+                        max={endDate}
+                      />
+                    </div>
+                    <div className="d-flex flex-column pb-2 justify-content-end mx-3">
+                      -
+                    </div>
+                    <div className="d-flex flex-column">
+                      <Form.Label className="me-2">
+                        {" "}
+                        <IconCalendarMonth className="me-2" />
+                        Fecha de fin:
+                      </Form.Label>
+                      <Form.Control
+                        type="date"
+                        aria-label="Fecha de fin"
+                        value={endDate}
+                        onChange={handleEndDateChange}
+                        min={startDate}
+                        max={endDataDate}
+                      />
+                    </div>
+                  </Form.Group>
+                </div>
               </div>
 
-              <h4 className="mb-0">{currentStation?.name}</h4>
-              <p className="text-muted ">Fuente: WeatherLink</p>
               <hr />
               <p>
                 La estación meteorológica <b>{currentStation?.name}</b> está
                 ubicada en{" "}
                 <b>
-                  {currentStation?.latitude + ", " + currentStation?.longitude}.
+                  {currentStation?.latitude + ", " + currentStation?.longitude}.{" "}
                 </b>
-                Su principal objetivo es monitorear y registrar las condiciones
-                climáticas locales, proporcionando datos precisos y en tiempo
-                real.
+                Cuenta con datos observados desde el {" ----- "} hasta el{" "}
+                <b>{endDataDate}</b>, se puede comparar con datos espaciales
+                como AgERA-5 y CHIRPS que tiene datos desde el {" ----- "} hasta
+                el <b>{endDataSpacialDate}</b>.
               </p>
               {currentStation?.latitude && currentStation?.longitude ? (
                 <MapContainer
@@ -381,7 +407,7 @@ const Dashboard = () => {
               isFavorite={isFavorite}
             />
             <FloatingButton type="download" onClick={downloadAllData} />
-            <FloatingButton type="compare" onClick={() => alert("Comparar")} />
+            <FloatingButton type="compare" onClick={compareData} />
           </>
         )}
       </Container>

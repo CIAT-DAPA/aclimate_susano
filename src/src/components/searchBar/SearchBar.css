@@ -10,8 +10,9 @@
     width: 320px;
   }
 }
-.stations-search{
-  width: 95vw;
+.stations-search {
+  width: 100%;
+  z-index: 2000;
 }
 
 .bar-hints {

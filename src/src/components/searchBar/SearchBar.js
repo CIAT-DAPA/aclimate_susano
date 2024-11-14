@@ -2,7 +2,7 @@ import { IconSearch, IconRouter } from "@tabler/icons-react";
 import React, { useState } from "react";
 import "./SearchBar.css";
 
-function SearchBar({ stations, onStationClick, bigSize, dashboard }) {
+function SearchBar({ stations, onStationClick, bigSize, dashboard, onMap }) {
   const [filterText, setFilterText] = useState("");
   const [selectedStation, setSelectedStation] = useState(null);
 
@@ -30,7 +30,11 @@ function SearchBar({ stations, onStationClick, bigSize, dashboard }) {
   };
 
   return (
-    <div className={`${dashboard ? "" : "bar-hints"}`}>
+    <div
+      className={`${dashboard ? "" : "bar-hints"} ${
+        onMap ? "" : "position-relative"
+      }`}
+    >
       <div
         className={`d-flex px-3 bg-white align-items-center border-bottom justify-content-between py-2 ${
           filterText.length < 3 ? "search-bar-unfocused" : "search-bar-focused"

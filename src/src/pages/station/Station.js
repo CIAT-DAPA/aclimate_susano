@@ -123,6 +123,7 @@ function Station() {
         bigSize={true}
         stations={stations}
         onStationClick={handleStationClick}
+        onMap
       />
     </>
   );

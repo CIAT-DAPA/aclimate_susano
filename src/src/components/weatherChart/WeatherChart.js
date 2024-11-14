@@ -85,8 +85,7 @@ const WeatherChart = ({
             <div className="d-flex justify-content-between align-items-center">
               <h5>{title}</h5>
               <Button
-                variant="primary"
-                className="text-white"
+                variant="dark"
                 onClick={downloadCSV}
                 disabled={
                   data.length === 0 ||
@@ -110,7 +109,9 @@ const WeatherChart = ({
               </div>
             ) : allDataZero ? (
               <div className="h-75 d-flex flex-column justify-content-between">
-                <p>No hubo {title.toLowerCase()} durante este período.</p>
+                <p>
+                  No hay datos de {title.toLowerCase()} durante este período.
+                </p>
                 <img
                   src={noDataImage}
                   alt="No data available"
