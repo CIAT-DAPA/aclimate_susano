@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import {
+  Col,
+  Container,
+  Form,
+  Row,
+  Spinner,
+  Toast,
+  ToastContainer,
+} from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import SearchBar from "../../components/searchBar/SearchBar";
 import Services from "../../services/Services";
@@ -17,6 +25,12 @@ const Dashboard = () => {
     precipitation: [],
     solRad: [],
   });
+  const [dataSpacial, setDataSpacial] = useState({
+    tempMax: [],
+    tempMin: [],
+    precipitation: [],
+    solRad: [],
+  });
   const [stations, setStations] = useState([]);
   const [currentStation, setCurrentStation] = useState(null);
   const [currentStationSpacial, setCurrentStationSpacial] = useState(null);
@@ -27,6 +41,7 @@ const Dashboard = () => {
   const [endDataDate, setEndDataDate] = useState();
   const [endDataSpacialDate, setEndDataSpacialDate] = useState();
   const [isFavorite, setIsFavorite] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const { idWS } = useParams();
   const navigate = useNavigate();
 
@@ -81,11 +96,11 @@ const Dashboard = () => {
         const lastDataSpacialAvailable = await Services.getLastDailyWeather(
           currentStationSpacial.id
         );
-        const formattedSpacialEndDate = new Date(
-          lastDataSpacialAvailable[0].date
-        )
-          .toISOString()
-          .split("T")[0];
+        const formattedSpacialEndDate = lastDataSpacialAvailable.length
+          ? new Date(lastDataSpacialAvailable[0].date)
+              .toISOString()
+              .split("T")[0]
+          : "N/A";
         setEndDataSpacialDate(formattedSpacialEndDate);
 
         const startDate = new Date(lastDataAvailable[0].date);
@@ -223,10 +238,50 @@ const Dashboard = () => {
     setIsFavorite(true);
   };
 
-  const compareData = () => {};
+  const compareData = () => {
+    const fetchData = async () => {
+      if (!currentStationSpacial) return;
+      try {
+        const response = await Services.getDailyWeather(
+          startDate,
+          endDate,
+          currentStationSpacial.id
+        );
+        const parsedData = parseWeatherData(response.daily_data);
+        setDataSpacial(parsedData);
+        console.log(parsedData);
+      } catch (error) {
+        console.error("Error fetching daily weather data:", error);
+      } finally {
+        if (dataSpacial.tempMax.length === 0) {
+          setShowToast(true);
+        }
+      }
+    };
+    fetchData();
+  };
 
   return (
     <div className="bg-dashboard">
+      <ToastContainer
+        className="p-3 position-fixed "
+        position="middle-center"
+        style={{ zIndex: 3000 }}
+      >
+        <Toast
+          onClose={() => setShowToast(false)}
+          show={showToast}
+          delay={3000}
+          autohide
+          bg="warning"
+        >
+          <Toast.Header>
+            <strong className="me-auto">
+              La estacion no tiene datos espaciales para este periodo de tiempo!
+            </strong>
+          </Toast.Header>
+        </Toast>
+      </ToastContainer>
       <Container className="p-3 bg-dashboard">
         <SearchBar
           stations={stations}
@@ -327,6 +382,7 @@ const Dashboard = () => {
               <WeatherChart
                 title="Precipitación"
                 data={data.precipitation}
+                dataSpatial={dataSpacial.precipitation}
                 unit="mm"
                 color="rgba(26, 51, 237, 1)"
                 isChartLoading={isChartLoading}
@@ -335,6 +391,7 @@ const Dashboard = () => {
               <WeatherChart
                 title="Temperatura Máxima"
                 data={data.tempMax}
+                dataSpatial={dataSpacial.tempMax}
                 unit="°C"
                 color="rgba(163, 36, 36, 1)"
                 isChartLoading={isChartLoading}
@@ -344,6 +401,7 @@ const Dashboard = () => {
               <WeatherChart
                 title="Temperatura Mínima"
                 data={data.tempMin}
+                dataSpatial={dataSpacial.tempMin}
                 unit="°C"
                 color="rgba(184, 84, 13, 1)"
                 isChartLoading={isChartLoading}
@@ -351,6 +409,7 @@ const Dashboard = () => {
               <WeatherChart
                 title="Radiación Solar"
                 data={data.solRad}
+                dataSpatial={dataSpacial.solRad}
                 unit="MJ"
                 color="rgba(237, 185, 12, 1)"
                 isChartLoading={isChartLoading}

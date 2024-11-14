@@ -27,6 +27,7 @@ Chart.register(
 const WeatherChart = ({
   title,
   data,
+  dataSpatial,
   unit,
   color,
   isChartLoading,
@@ -71,7 +72,7 @@ const WeatherChart = ({
     document.body.removeChild(link);
   };
 
-  const chartConfig = (label, data, color) => ({
+  const chartConfig = (label, data, color, dataSpatial, spatialColor) => ({
     labels: data.map((item) => item.label),
     datasets: [
       {
@@ -81,6 +82,17 @@ const WeatherChart = ({
         borderColor: color,
         tension: 0.1,
       },
+      ...(dataSpatial
+        ? [
+            {
+              label: `Datos satelitales`,
+              data: dataSpatial.map((item) => item.value),
+              fill: false,
+              borderColor: spatialColor,
+              tension: 0.1,
+            },
+          ]
+        : []),
     ],
   });
 
@@ -91,7 +103,7 @@ const WeatherChart = ({
         y: { title: { display: true, text: unit }, beginAtZero: false },
       },
     }),
-    []
+    [unit]
   );
 
   const ChartOptionsStartedAtZero = useMemo(
@@ -177,7 +189,13 @@ const WeatherChart = ({
                   identificar patrones climáticos recientes en la región.
                 </p>
                 <Line
-                  data={chartConfig("Datos estación", data, color)}
+                  data={chartConfig(
+                    "Datos estación",
+                    data,
+                    color,
+                    dataSpatial,
+                    "rgba(255, 99, 132, 1)"
+                  )}
                   options={
                     startAtZero ? ChartOptionsStartedAtZero : chartOptions
                   }
