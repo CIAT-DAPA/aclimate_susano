@@ -33,6 +33,16 @@ const WeatherChart = ({
   isChartLoading,
   startAtZero,
 }) => {
+  const adjustColorOpacity = (color, opacity) => {
+    const rgba = color.replace(
+      /rgba?\((\d+), ?(\d+), ?(\d+),? ?([\d\.]*)\)/,
+      (match, r, g, b, a) => {
+        return `rgba(${r},${g},${b},${opacity})`;
+      }
+    );
+    return rgba;
+  };
+
   const maxItem = useMemo(
     () =>
       data.reduce(
@@ -82,7 +92,7 @@ const WeatherChart = ({
         borderColor: color,
         tension: 0.1,
       },
-      ...(dataSpatial
+      ...(dataSpatial.length > 0
         ? [
             {
               label: `Datos satelitales`,
@@ -194,7 +204,7 @@ const WeatherChart = ({
                     data,
                     color,
                     dataSpatial,
-                    "rgba(255, 99, 132, 1)"
+                    adjustColorOpacity(color, 0.5)
                   )}
                   options={
                     startAtZero ? ChartOptionsStartedAtZero : chartOptions

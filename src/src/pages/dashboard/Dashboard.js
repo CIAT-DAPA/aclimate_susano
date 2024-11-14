@@ -249,13 +249,20 @@ const Dashboard = () => {
         );
         const parsedData = parseWeatherData(response.daily_data);
         setDataSpacial(parsedData);
-        console.log(parsedData);
-      } catch (error) {
-        console.error("Error fetching daily weather data:", error);
-      } finally {
-        if (dataSpacial.tempMax.length === 0) {
+        console.log(data);
+
+        if (
+          parsedData.tempMax.length === 0 &&
+          parsedData.tempMin.length === 0 &&
+          parsedData.precipitation.length === 0 &&
+          parsedData.solRad.length === 0
+        ) {
           setShowToast(true);
         }
+      } catch (error) {
+        console.error("Error fetching daily weather data:", error);
+        setShowToast(true);
+      } finally {
       }
     };
     fetchData();
