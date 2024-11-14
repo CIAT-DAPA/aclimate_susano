@@ -350,7 +350,7 @@ const Dashboard = () => {
                 La estación meteorológica <b>{currentStation?.name}</b> está
                 ubicada en{" "}
                 <b>
-                  {currentStation?.latitude + ", " + currentStation?.longitude}.
+                  {currentStation?.latitude + ", " + currentStation?.longitude}.{" "}
                 </b>
                 Cuenta con datos observados desde el {" ----- "} hasta el{" "}
                 <b>{endDataDate}</b>, se puede comparar con datos espaciales
