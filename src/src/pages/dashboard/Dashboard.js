@@ -225,44 +225,6 @@ const Dashboard = () => {
 
   const compareData = () => {};
 
-  const chartConfig = (label, data, color) => ({
-    labels: data.map((item) => item.label),
-    datasets: [
-      {
-        label,
-        data: data.map((item) => item.value),
-        fill: false,
-        borderColor: color,
-        tension: 0.1,
-      },
-    ],
-  });
-
-  const chartOptions = useMemo(
-    () => ({
-      scales: {
-        x: { title: { display: true, text: "Días" } },
-        y: { title: { display: true, text: "Valores" }, beginAtZero: false },
-      },
-    }),
-    []
-  );
-
-  const precipitationChartOptions = useMemo(
-    () => ({
-      ...chartOptions,
-      scales: {
-        ...chartOptions.scales,
-        y: {
-          ...chartOptions.scales.y,
-          beginAtZero: true,
-          min: 0,
-        },
-      },
-    }),
-    [chartOptions]
-  );
-
   return (
     <div className="bg-dashboard">
       <Container className="p-3 bg-dashboard">
@@ -366,17 +328,14 @@ const Dashboard = () => {
                 title="Precipitación"
                 data={data.precipitation}
                 unit="mm"
-                chartOptions={precipitationChartOptions}
-                chartConfig={chartConfig}
                 color="rgba(26, 51, 237, 1)"
                 isChartLoading={isChartLoading}
+                startAtZero
               />
               <WeatherChart
                 title="Temperatura Máxima"
                 data={data.tempMax}
                 unit="°C"
-                chartOptions={chartOptions}
-                chartConfig={chartConfig}
                 color="rgba(163, 36, 36, 1)"
                 isChartLoading={isChartLoading}
               />
@@ -386,8 +345,6 @@ const Dashboard = () => {
                 title="Temperatura Mínima"
                 data={data.tempMin}
                 unit="°C"
-                chartOptions={chartOptions}
-                chartConfig={chartConfig}
                 color="rgba(184, 84, 13, 1)"
                 isChartLoading={isChartLoading}
               />
@@ -395,8 +352,6 @@ const Dashboard = () => {
                 title="Radiación Solar"
                 data={data.solRad}
                 unit="MJ"
-                chartOptions={chartOptions}
-                chartConfig={chartConfig}
                 color="rgba(237, 185, 12, 1)"
                 isChartLoading={isChartLoading}
               />

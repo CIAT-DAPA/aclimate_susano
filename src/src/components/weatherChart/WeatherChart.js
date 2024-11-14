@@ -28,10 +28,9 @@ const WeatherChart = ({
   title,
   data,
   unit,
-  chartOptions,
-  chartConfig,
   color,
   isChartLoading,
+  startAtZero,
 }) => {
   const maxItem = useMemo(
     () =>
@@ -71,6 +70,44 @@ const WeatherChart = ({
     link.click();
     document.body.removeChild(link);
   };
+
+  const chartConfig = (label, data, color) => ({
+    labels: data.map((item) => item.label),
+    datasets: [
+      {
+        label,
+        data: data.map((item) => item.value),
+        fill: false,
+        borderColor: color,
+        tension: 0.1,
+      },
+    ],
+  });
+
+  const chartOptions = useMemo(
+    () => ({
+      scales: {
+        x: { title: { display: true, text: "Días" } },
+        y: { title: { display: true, text: unit }, beginAtZero: false },
+      },
+    }),
+    []
+  );
+
+  const ChartOptionsStartedAtZero = useMemo(
+    () => ({
+      ...chartOptions,
+      scales: {
+        ...chartOptions.scales,
+        y: {
+          ...chartOptions.scales.y,
+          beginAtZero: true,
+          min: 0,
+        },
+      },
+    }),
+    [chartOptions]
+  );
 
   return (
     <Col lg={6} className="mb-4">
@@ -140,8 +177,10 @@ const WeatherChart = ({
                   identificar patrones climáticos recientes en la región.
                 </p>
                 <Line
-                  data={chartConfig(title, data, color)}
-                  options={chartOptions}
+                  data={chartConfig("Datos estación", data, color)}
+                  options={
+                    startAtZero ? ChartOptionsStartedAtZero : chartOptions
+                  }
                 />
               </>
             )}
