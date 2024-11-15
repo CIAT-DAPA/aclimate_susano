@@ -368,6 +368,12 @@ const Dashboard = () => {
               <div className="d-flex justify-content-between flex-column flex-lg-row">
                 <div>
                   <h1 className="mb-0">{currentStation?.name}</h1>
+                  <p className="mb-0">
+                    Ubicacion:{" "}
+                    {currentStation?.latitude +
+                      ", " +
+                      currentStation?.longitude}
+                  </p>
                   <p className="text-muted ">Fuente: WeatherLink</p>
                 </div>
                 <div className="d-flex justify-content-between flex-column align-items-end mb-2">
@@ -425,13 +431,13 @@ const Dashboard = () => {
                 La estación meteorológica <b>{currentStation?.name}</b> está
                 ubicada en{" "}
                 <b>
-                  {currentStation?.latitude + ", " + currentStation?.longitude}.{" "}
+                  {currentStation?.municipality + ", " + currentStation?.state}.{" "}
                 </b>
-                Cuenta con datos observados desde el{" "}
-                <b>{startDataDate || "N/A"}</b> hasta el{" "}
+                Cuenta con datos observados desde{" "}
+                <b>{startDataDate || "N/A"}</b> hasta{" "}
                 <b>{endDataDate || "N/A"}</b>, se puede comparar con datos
-                espaciales como AgERA-5 y CHIRPS que tiene datos desde el{" "}
-                <b>{startDataSpacialDate || "N/A"}</b> hasta el{" "}
+                espaciales como <b>AgERA-5 y CHIRPS</b> que tiene datos desde{" "}
+                <b>{startDataSpacialDate || "N/A"}</b> hasta{" "}
                 <b>{endDataSpacialDate || "N/A"}</b>.
               </p>
               {currentStation?.latitude && currentStation?.longitude ? (

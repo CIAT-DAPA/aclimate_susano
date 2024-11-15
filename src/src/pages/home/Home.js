@@ -93,17 +93,16 @@ const Home = () => {
             <Col className="col-12 col-md-7 col-lg-5 d-flex flex-column gap-2 mb-5 mb-md-0">
               <h1 className="text-light">Bienvenido a AClimate monitoring</h1>
               <p className="text-light fw-medium">
-                Explora y compara los datos de las estaciones en tiempo real con
-                otras bases de datos confiables. Simplifica la toma de
-                decisiones con información precisa y personalizada al alcance de
-                tu mano.
+                Explora, monitorea y compara los datos de las estaciones
+                climátologicas con bases de datos satelitales. Informate sobre
+                como ha sido el clima en las regiones.
               </p>
               <Link
                 to="/estaciones"
                 className="btn btn-primary text-light rounded-5 py-2 px-4 fw-semibold"
                 aria-label="Revisa los datos"
               >
-                Revisa los datos
+                Explora el clima
               </Link>
             </Col>
           </Row>

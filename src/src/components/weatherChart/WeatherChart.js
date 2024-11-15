@@ -33,14 +33,92 @@ const WeatherChart = ({
   isChartLoading,
   startAtZero,
 }) => {
-  const adjustColorOpacity = (color, opacity) => {
-    const rgba = color.replace(
-      /rgba?\((\d+), ?(\d+), ?(\d+),? ?([\d.]*)\)/,
-      (match, r, g, b, a) => {
-        return `rgba(${r},${g},${b},${opacity})`;
+  const adjustColor = (
+    color,
+    opacity = 1,
+    brightnessFactor = 1.2,
+    hueShift = 10
+  ) => {
+    // Convertir RGB a HSL
+    const rgbToHsl = (r, g, b) => {
+      r /= 255;
+      g /= 255;
+      b /= 255;
+
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      let h,
+        s,
+        l = (max + min) / 2;
+
+      if (max === min) {
+        h = s = 0; // gris
+      } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r:
+            h = (g - b) / d + (g < b ? 6 : 0);
+            break;
+          case g:
+            h = (b - r) / d + 2;
+            break;
+          case b:
+            h = (r - g) / d + 4;
+            break;
+        }
+        h *= 60;
       }
-    );
-    return rgba;
+
+      return [h, s, l];
+    };
+
+    // Convertir HSL de nuevo a RGB
+    const hslToRgb = (h, s, l) => {
+      let r, g, b;
+
+      const hueToRgb = (p, q, t) => {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1 / 6) return p + (q - p) * 6 * t;
+        if (t < 1 / 3) return q;
+        if (t < 1 / 2) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+      };
+
+      if (s === 0) {
+        r = g = b = l; // gris
+      } else {
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hueToRgb(p, q, h / 360 + 1 / 3);
+        g = hueToRgb(p, q, h / 360);
+        b = hueToRgb(p, q, h / 360 - 1 / 3);
+      }
+
+      return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+    };
+
+    // Extraer los valores RGB del color
+    const rgbaMatch = color.match(/rgba?\((\d+), ?(\d+), ?(\d+),? ?([\d.]*)\)/);
+    if (!rgbaMatch) {
+      throw new Error("Formato de color no válido");
+    }
+
+    const [r, g, b] = rgbaMatch.slice(1, 4).map(Number);
+
+    // Convertir a HSL
+    let [h, s, l] = rgbToHsl(r, g, b);
+
+    // Ajustar el brillo (luminance) y el hue (matiz)
+    l = Math.min(1, l * brightnessFactor); // Aumentar el brillo
+    h = (h + hueShift) % 360; // Cambiar el hue
+
+    // Convertir de nuevo a RGB
+    const [newR, newG, newB] = hslToRgb(h, s, l);
+
+    // Retornar el color con la nueva opacidad
+    return `rgba(${newR},${newG},${newB},${opacity})`;
   };
 
   const maxItem = useMemo(
@@ -99,6 +177,7 @@ const WeatherChart = ({
         data: data.map((item) => item.value),
         fill: false,
         borderColor: color,
+        backgroundColor: color,
         tension: 0.1,
       },
       ...(dataSpacial.length > 0
@@ -107,7 +186,8 @@ const WeatherChart = ({
               label: `Datos satelitales`,
               data: dataSpacial.map((item) => item.value),
               fill: false,
-              borderColor: adjustColorOpacity(color, 0.5),
+              borderColor: adjustColor(color, 0.5, 1, 15),
+              backgroundColor: adjustColor(color, 0.5, 1, 15),
               tension: 0.1,
             },
           ]
@@ -189,23 +269,21 @@ const WeatherChart = ({
             ) : (
               <>
                 <p>
-                  La gráfica muestra la evolución de {title.toLowerCase()}{" "}
-                  registrada en la estación meteorológica durante los{" "}
-                  <b>últimos {data.length} días</b>. En ella se destaca que el
-                  día con la {title.toLowerCase()} más alta fue el{" "}
+                  La gráfica muestra los datos de {title.toLowerCase()}{" "}
+                  registrada en la estación meteorológica desde{" "}
+                  <b>{data[0].label}</b> hasta{" "}
+                  <b>{data[data.length - 1].label}</b>. En ella se destaca que
+                  el día con la {title.toLowerCase()} más alta fue el{" "}
                   <b>{formatLabel(maxItem.label)}</b>, alcanzando un máximo de{" "}
                   <b>
                     {maxItem.value.toFixed(2)} {unit}
                   </b>
                   , mientras que el día con la {title.toLowerCase()} más baja
-                  fue el <b>{formatLabel(minItem.label)}</b>, con una{" "}
-                  {title.toLowerCase()} de{" "}
+                  fue el <b>{formatLabel(minItem.label)}</b>, con una mínima de{" "}
                   <b>
                     {minItem.value.toFixed(2)} {unit}
                   </b>
-                  . Esta visualización permite analizar las variaciones diarias
-                  de {title.toLowerCase()} y ofrece una referencia clara para
-                  identificar patrones climáticos recientes en la región.
+                  .
                 </p>
                 <Line
                   data={chartConfig("Datos estación", data, color, dataSpacial)}

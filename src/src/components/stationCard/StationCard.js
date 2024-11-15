@@ -78,6 +78,12 @@ function StationCard({ loading, msgError, station }) {
               <div>
                 <div className="mb-4">
                   <h4 className="mb-0">{station.name}</h4>
+                  <span className="text-capitalize">
+                    <IconMapPin size={24} className="me-2" />
+                    {station.municipality}, {station.state}
+                  </span>
+                </div>
+                <div className="d-flex flex-column gap-1">
                   <span>
                     {lastDataStation?.climaticData
                       ? lastDataStation.climaticData
@@ -92,8 +98,6 @@ function StationCard({ loading, msgError, station }) {
                       : "N/A"}{" "}
                     °C
                   </span>
-                </div>
-                <div className="d-flex flex-column gap-1">
                   {renderClimaticData(
                     "prec",
                     <IconDroplet size={24} className="me-2" />,
@@ -116,10 +120,6 @@ function StationCard({ loading, msgError, station }) {
                   <span>{lastDataStation?.date ?? "N/A"}</span>
                 </div>
                 <div>
-                  <span className="text-capitalize">
-                    <IconMapPin size={24} className="me-2" />
-                    {station.municipality}, {station.state}
-                  </span>
                 </div>
               </div>
             </div>
