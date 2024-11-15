@@ -16,7 +16,10 @@ import L from "leaflet";
 import "./Dashboard.css";
 import WeatherChart from "../../components/weatherChart/WeatherChart";
 import FloatingButton from "../../components/floatingButton/FloatingButton.js";
-import { IconCalendarMonth } from "@tabler/icons-react";
+import {
+  IconAlertTriangleFilled,
+  IconCalendarMonth,
+} from "@tabler/icons-react";
 
 const Dashboard = () => {
   const [data, setData] = useState({
@@ -362,12 +365,12 @@ const Dashboard = () => {
         ) : (
           <>
             <Col className="bg-white rounded p-4 my-2 text-dark">
-              <div className="d-flex justify-content-between">
+              <div className="d-flex justify-content-between flex-column flex-lg-row">
                 <div>
                   <h1 className="mb-0">{currentStation?.name}</h1>
                   <p className="text-muted ">Fuente: WeatherLink</p>
                 </div>
-                <div className="d-flex justify-content-between align-items-center mb-2">
+                <div className="d-flex justify-content-between flex-column align-items-end mb-2">
                   <Form.Group className="d-flex">
                     <div className="d-flex flex-column">
                       <Form.Label className="me-2">
@@ -403,6 +406,17 @@ const Dashboard = () => {
                       />
                     </div>
                   </Form.Group>
+                  {new Date(startDate) >= new Date(startDataSpacialDate) &&
+                  new Date(endDate) <= new Date(endDataSpacialDate) ? (
+                    <></>
+                  ) : (
+                    <span className="d-flex mt-3 text-warning-emphasis fw-semibold">
+                      <IconAlertTriangleFilled className="me-2" />
+                      <p className="mb-0">
+                        En este rango de fechas no hay datos espaciales
+                      </p>
+                    </span>
+                  )}
                 </div>
               </div>
 
