@@ -6,7 +6,7 @@ import "./Menu.css";
 
 function Menu() {
   return (
-    <Navbar collapseOnSelect expand="lg" className="w-100 p-0 bg-dark">
+    <Navbar collapseOnSelect expand="lg" className="w-100 p-0 bg-dark navbar-dark">
       <Container className="py-1">
         <Link
           to="/"

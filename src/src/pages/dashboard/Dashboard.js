@@ -376,7 +376,7 @@ const Dashboard = () => {
                   </p>
                   <p className="text-muted ">Fuente: WeatherLink</p>
                 </div>
-                <div className="d-flex justify-content-between flex-column align-items-end mb-2">
+                <div className="d-flex justify-content-between flex-column align-items-start align-items-lg-end mb-2">
                   <Form.Group className="d-flex">
                     <div className="d-flex flex-column">
                       <Form.Label className="me-2">
