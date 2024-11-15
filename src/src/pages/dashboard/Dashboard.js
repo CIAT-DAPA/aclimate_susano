@@ -37,6 +37,8 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isChartLoading, setIsChartLoading] = useState(false);
   const [startDate, setStartDate] = useState();
+  const [startDataDate, setStartDataDate] = useState();
+  const [startDataSpacialDate, setStartDataSpacialDate] = useState();
   const [endDate, setEndDate] = useState();
   const [endDataDate, setEndDataDate] = useState();
   const [endDataSpacialDate, setEndDataSpacialDate] = useState();
@@ -79,6 +81,12 @@ const Dashboard = () => {
       }
     };
     fetchStations();
+    setDataSpacial({
+      tempMax: [],
+      tempMin: [],
+      precipitation: [],
+      solRad: [],
+    });
   }, [idWS]);
 
   useEffect(() => {
@@ -103,10 +111,33 @@ const Dashboard = () => {
           : "N/A";
         setEndDataSpacialDate(formattedSpacialEndDate);
 
+        const firstDataAvailable = await Services.getLastDailyWeather(
+          idWS,
+          false
+        );
+        const formattedFirstDataDate = new Date(firstDataAvailable[0].date)
+          .toISOString()
+          .split("T")[0];
+        setStartDataDate(formattedFirstDataDate);
+        const firstDataSpacialAvailable = await Services.getLastDailyWeather(
+          currentStationSpacial.id,
+          false
+        );
+        const formattedFirstDataSpacialDate = firstDataSpacialAvailable.length
+          ? new Date(firstDataSpacialAvailable[0].date)
+              .toISOString()
+              .split("T")[0]
+          : "N/A";
+        setStartDataSpacialDate(formattedFirstDataSpacialDate);
         const startDate = new Date(lastDataAvailable[0].date);
         startDate.setDate(startDate.getDate() - 7);
         const formattedStartDate = startDate.toISOString().split("T")[0];
-        setStartDate(formattedStartDate);
+
+        if (new Date(formattedFirstDataDate) > new Date(formattedStartDate)) {
+          setStartDate(formattedFirstDataDate);
+        } else {
+          setStartDate(formattedStartDate);
+        }
 
         const response = await Services.getDailyWeather(
           formattedStartDate,
@@ -206,16 +237,45 @@ const Dashboard = () => {
   };
 
   const downloadAllData = () => {
+    const hasDataSpacial =
+      dataSpacial.tempMax.length > 0 ||
+      dataSpacial.tempMin.length > 0 ||
+      dataSpacial.precipitation.length > 0 ||
+      dataSpacial.solRad.length > 0;
+
     const csvData = [
-      ["Date", "Temp Max", "Temp Min", "Precipitation", "Solar Radiation"],
+      [
+        "Fecha",
+        "Temp Max",
+        "Temp Min",
+        "Precipitación",
+        "Radiación Solar",
+        ...(hasDataSpacial
+          ? [
+              "Temp Max (Satelital)",
+              "Temp Min (Satelital)",
+              "Precipitación (Satelital)",
+              "Radiación Solar (Satelital)",
+            ]
+          : []),
+      ],
       ...data.tempMax.map((item, index) => [
         item.label,
         item.value,
         data.tempMin[index]?.value ?? "N/A",
         data.precipitation[index]?.value ?? "N/A",
         data.solRad[index]?.value ?? "N/A",
+        ...(hasDataSpacial
+          ? [
+              dataSpacial.tempMax[index]?.value ?? "N/A",
+              dataSpacial.tempMin[index]?.value ?? "N/A",
+              dataSpacial.precipitation[index]?.value ?? "N/A",
+              dataSpacial.solRad[index]?.value ?? "N/A",
+            ]
+          : []),
       ]),
     ];
+
     const csvContent =
       "data:text/csv;charset=utf-8," +
       csvData.map((e) => e.join(",")).join("\n");
@@ -321,6 +381,7 @@ const Dashboard = () => {
                         value={startDate}
                         onChange={handleStartDateChange}
                         max={endDate}
+                        min={startDataDate}
                       />
                     </div>
                     <div className="d-flex flex-column pb-2 justify-content-end mx-3">
@@ -352,10 +413,12 @@ const Dashboard = () => {
                 <b>
                   {currentStation?.latitude + ", " + currentStation?.longitude}.{" "}
                 </b>
-                Cuenta con datos observados desde el {" ----- "} hasta el{" "}
-                <b>{endDataDate}</b>, se puede comparar con datos espaciales
-                como AgERA-5 y CHIRPS que tiene datos desde el {" ----- "} hasta
-                el <b>{endDataSpacialDate}</b>.
+                Cuenta con datos observados desde el{" "}
+                <b>{startDataDate || "N/A"}</b> hasta el{" "}
+                <b>{endDataDate || "N/A"}</b>, se puede comparar con datos
+                espaciales como AgERA-5 y CHIRPS que tiene datos desde el{" "}
+                <b>{startDataSpacialDate || "N/A"}</b> hasta el{" "}
+                <b>{endDataSpacialDate || "N/A"}</b>.
               </p>
               {currentStation?.latitude && currentStation?.longitude ? (
                 <MapContainer
@@ -388,7 +451,7 @@ const Dashboard = () => {
               <WeatherChart
                 title="Precipitación"
                 data={data.precipitation}
-                dataSpatial={dataSpacial.precipitation}
+                dataSpacial={dataSpacial.precipitation}
                 unit="mm"
                 color="rgba(26, 51, 237, 1)"
                 isChartLoading={isChartLoading}
@@ -397,7 +460,7 @@ const Dashboard = () => {
               <WeatherChart
                 title="Temperatura Máxima"
                 data={data.tempMax}
-                dataSpatial={dataSpacial.tempMax}
+                dataSpacial={dataSpacial.tempMax}
                 unit="°C"
                 color="rgba(163, 36, 36, 1)"
                 isChartLoading={isChartLoading}
@@ -407,7 +470,7 @@ const Dashboard = () => {
               <WeatherChart
                 title="Temperatura Mínima"
                 data={data.tempMin}
-                dataSpatial={dataSpacial.tempMin}
+                dataSpacial={dataSpacial.tempMin}
                 unit="°C"
                 color="rgba(184, 84, 13, 1)"
                 isChartLoading={isChartLoading}
@@ -415,7 +478,7 @@ const Dashboard = () => {
               <WeatherChart
                 title="Radiación Solar"
                 data={data.solRad}
-                dataSpatial={dataSpacial.solRad}
+                dataSpacial={dataSpacial.solRad}
                 unit="MJ"
                 color="rgba(237, 185, 12, 1)"
                 isChartLoading={isChartLoading}

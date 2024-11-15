@@ -79,8 +79,8 @@ class Services {
    * @returns {Promise<Object>} A promise that resolves to the daily weather data.
    * @throws Will throw an error if the request fails.
    */
-  async getLastDailyWeather(stationsIds) {
-    const url = `/DailyWeatherData/LastDailyData/${stationsIds}/json`;
+  async getLastDailyWeather(stationsIds, lastData = true) {
+    const url = `/DailyWeatherData/LastDailyData/${stationsIds}/json?lastData=${lastData}`;
     try {
       const response = await apiClient.get(url);
       return response.data;

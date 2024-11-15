@@ -27,7 +27,7 @@ Chart.register(
 const WeatherChart = ({
   title,
   data,
-  dataSpatial,
+  dataSpacial,
   unit,
   color,
   isChartLoading,
@@ -67,9 +67,18 @@ const WeatherChart = ({
 
   const downloadCSV = () => {
     const csvData = [
-      ["Date", "Value"],
-      ...data.map((item) => [item.label, item.value]),
+      [
+        "Fecha",
+        title,
+        ...(dataSpacial.length > 0 ? [`${title} satelital`] : []),
+      ],
+      ...data.map((item, index) => [
+        item.label,
+        item.value,
+        ...(dataSpacial.length > 0 ? [dataSpacial[index]?.value ?? "N/A"] : []),
+      ]),
     ];
+
     const csvContent =
       "data:text/csv;charset=utf-8," +
       csvData.map((e) => e.join(",")).join("\n");
@@ -82,7 +91,7 @@ const WeatherChart = ({
     document.body.removeChild(link);
   };
 
-  const chartConfig = (label, data, color, dataSpatial) => ({
+  const chartConfig = (label, data, color, dataSpacial) => ({
     labels: data.map((item) => item.label),
     datasets: [
       {
@@ -92,11 +101,11 @@ const WeatherChart = ({
         borderColor: color,
         tension: 0.1,
       },
-      ...(dataSpatial.length > 0
+      ...(dataSpacial.length > 0
         ? [
             {
               label: `Datos satelitales`,
-              data: dataSpatial.map((item) => item.value),
+              data: dataSpacial.map((item) => item.value),
               fill: false,
               borderColor: adjustColorOpacity(color, 0.5),
               tension: 0.1,
@@ -199,7 +208,7 @@ const WeatherChart = ({
                   identificar patrones climáticos recientes en la región.
                 </p>
                 <Line
-                  data={chartConfig("Datos estación", data, color, dataSpatial)}
+                  data={chartConfig("Datos estación", data, color, dataSpacial)}
                   options={
                     startAtZero ? ChartOptionsStartedAtZero : chartOptions
                   }
