@@ -63,7 +63,7 @@ pipeline {
     post {
         failure {
             script {
-                echo "Pipeline failed with the following error"
+                echo "Pipeline failed"
             }
         }
 
