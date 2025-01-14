@@ -91,7 +91,7 @@ const Home = () => {
         <Container className="container-header pt-3">
           <Row className="justify-content-between flex-column flex-md-row">
             <Col className="col-12 col-md-7 col-lg-5 d-flex flex-column gap-2 mb-5 mb-md-0">
-              <h1 className="text-light">Bienvenido a AClimate monitoring</h1>
+              <h1 className="text-light">Bienvenido a AClimate nicaragua</h1>
               <p className="text-light fw-medium">
                 Explora, monitorea y compara los datos de las estaciones
                 climátologicas con bases de datos satelitales. Informate sobre

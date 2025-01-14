@@ -1,27 +1,108 @@
-name: Build and Deploy
-on: [push]
+name: React Build, Release, and Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ "stage" ]
+    tags:
+    - 'v*'
+
 permissions:
   contents: write
-env:
-  REACT_APP_COUNTRY_ID: ${{secrets.REACT_APP_COUNTRY_ID}}
+
 jobs:
-  build-and-deploy:
-    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+  build-release-and-deploy:
+    name: Build React App, Create Release, and Deploy to GitHub Pages
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
+      # Checkout the repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
+      # Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Cambia según la versión que necesite tu proyecto
+
+      # Install dependencies, set up .env, and build the project
+      - name: Install and Build 🔧
         env:
           CI: false
+          REACT_APP_COUNTRY_ID: ${{ secrets.REACT_APP_COUNTRY_ID }} # Variable secreta configurada en GitHub
         run: |
           cd ./src
-          echo "REACT_APP_COUNTRY_ID=${{env.REACT_APP_COUNTRY_ID}}" > .env
+          echo "REACT_APP_COUNTRY_ID=${{ env.REACT_APP_COUNTRY_ID }}" > .env
           npm ci
           npm run build
 
-      - name: Deploy 🚀
+      # Zip the build folder for the release
+      - name: Prepare Build Artifact
+        run: zip -r react-build.zip ./src/build
+
+      # Upload the artifact to the workflow
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: react-build
+          path: ./src/react-build.zip
+
+      # Generate the tag name for the release
+      - name: Generate Tag Name
+        id: tagger
+        uses: anothrNick/github-tag-action@1.61.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_branches: stage
+          with_v: true
+          default_bump: patch
+
+      # Create the release in GitHub
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tagger.outputs.new_tag }}
+          release_name: Release ${{ steps.tagger.outputs.new_tag }}
+          body: Build release for ${{ steps.tagger.outputs.new_tag }}
+          draft: false
+          prerelease: false
+
+      # Upload the build artifact to the release
+      - name: Upload Build to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: react-build.zip
+          asset_name: react-build.zip
+          asset_content_type: application/zip
+
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: src/build # The folder the action should deploy.
+          branch: gh-pages # Branch to deploy to
+          folder: ./src/build    # Folder to deploy
+
+  merge-to-main:
+    needs: build-release-and-deploy
+    name: Merge Stage with Main
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository
+      - uses: actions/checkout@v3
+
+      # Merge stage -> main
+      - name: Merge Stage into Main
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          head_to_merge: stage
+          target_branch: main
+          github_token: ${{ secrets.GITHUB_TOKEN }}
