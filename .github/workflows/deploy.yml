@@ -86,7 +86,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages # Branch to deploy to
-          folder: build    # Folder to deploy
+          folder: ./src/build    # Folder to deploy
 
   merge-to-main:
     needs: build-release-and-deploy
