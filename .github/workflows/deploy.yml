@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: react-build
-          path: react-build.zip
+          path: ./src/react-build.zip
 
       # Generate the tag name for the release
       - name: Generate Tag Name
