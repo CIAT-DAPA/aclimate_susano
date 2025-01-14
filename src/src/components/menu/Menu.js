@@ -16,10 +16,10 @@ function Menu() {
             src={logo}
             width="35"
             height="35"
-            alt="Aclimate Monitoring Logo"
+            alt="Aclimate Nicaragua Logo"
             className="d-inline-block align-top"
           />
-          AClimate Monitoring
+          AClimate Nicaragua
         </Link>
 
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
