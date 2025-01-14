@@ -16,48 +16,62 @@ pipeline {
         stage('Ssh to connect Herschel server') {
             steps {
                 script {
-                    // Set up remote SSH connection parameters
-                    remote.allowAnyHosts = true
-                    remote.identityFile = ssh_key
-                    remote.user = user
-                    remote.name = name
-                    remote.host = host
-                    
+                    try {
+                        // Set up remote SSH connection parameters
+                        remote.allowAnyHosts = true
+                        remote.identityFile = ssh_key
+                        remote.user = user
+                        remote.name = name
+                        remote.host = host
+
+                        // Test SSH connection
+                        sshCommand remote: remote, command: "echo 'Connection successful!'"
+                    } catch (Exception e) {
+                        // Capture and handle SSH connection errors
+                        currentBuild.description = "SSH Connection Error: ${e.message}"
+                        error("Failed to establish SSH connection: ${e.message}")
+                    }
                 }
             }
         }
         stage('Download latest release') {
             steps {
                 script {
-                    sshCommand remote: remote, command: """
-                        cd /var/www/docs/aclimate_nicaragua/
-                        rm -fr aclimate_nicaragua_backup_\$(date +"%Y%m%d")
-                        mkdir aclimate_nicaragua_backup_\$(date +"%Y%m%d")
-                        cp -r /var/www/docs/aclimate_nicaragua/susano/* aclimate_nicaragua_backup_\$(date +"%Y%m%d")
-                        rm -fr react-build.zip
-                        curl -LOk https://github.com/CIAT-DAPA/aclimate_susano/releases/latest/download/react-build.zip
-                        unzip -o react-build.zip
-                        rm -fr react-build.zip
-                        cp -r src/build/* /var/www/docs/aclimate_nicaragua/susano/
-                        rm -fr src
-                    """
+                    try {
+                        sshCommand remote: remote, command: """
+                            cd /var/www/docs/aclimate_nicaragua/
+                            rm -fr aclimate_nicaragua_backup_\$(date +"%Y%m%d")
+                            mkdir aclimate_nicaragua_backup_\$(date +"%Y%m%d")
+                            cp -r /var/www/docs/aclimate_nicaragua/susano/* aclimate_nicaragua_backup_\$(date +"%Y%m%d")
+                            rm -fr react-build.zip
+                            curl -LOk https://github.com/CIAT-DAPA/aclimate_susano/releases/latest/download/react-build.zip
+                            unzip -o react-build.zip
+                            rm -fr react-build.zip
+                            cp -r src/build/* /var/www/docs/aclimate_nicaragua/susano/
+                            rm -fr src
+                        """
+                    } catch (Exception e) {
+                        // Capture and handle errors during the download/deployment stage
+                        currentBuild.description = "Deployment Error: ${e.message}"
+                        error("An error occurred during deployment: ${e.message}")
+                    }
                 }
             }
         }
     }
-    
+
     post {
         failure {
             script {
-                echo 'fail :c'
+                echo "Pipeline failed with the following error: ${currentBuild.description ?: 'No details available'}"
             }
         }
 
         success {
             script {
-                echo 'everything went very well!!'
+                echo 'Everything went very well!!'
             }
         }
     }
- 
+
 }
