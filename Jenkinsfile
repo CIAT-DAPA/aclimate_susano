@@ -28,7 +28,7 @@ pipeline {
                         sshCommand remote: remote, command: "echo 'Connection successful!'"
                     } catch (Exception e) {
                         // Capture and handle SSH connection errors
-                        currentBuild.description = "SSH Connection Error: ${e.message}"
+                        echo "SSH Connection Error: ${e.message}"
                         error("Failed to establish SSH connection: ${e.message}")
                     }
                 }
@@ -52,7 +52,7 @@ pipeline {
                         """
                     } catch (Exception e) {
                         // Capture and handle errors during the download/deployment stage
-                        currentBuild.description = "Deployment Error: ${e.message}"
+                        echo "Deployment Error: ${e.message}"
                         error("An error occurred during deployment: ${e.message}")
                     }
                 }
@@ -63,7 +63,7 @@ pipeline {
     post {
         failure {
             script {
-                echo "Pipeline failed with the following error: ${currentBuild.description ?: 'No details available'}"
+                echo "Pipeline failed with the following error"
             }
         }
 
