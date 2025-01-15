@@ -8,7 +8,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 
 function App() {
   return (
-    <Router basename="/aclimate_susano">
+    <Router>
       <Menu />
       <Routes>
         <Route exact path="/" element={<Home />} />
