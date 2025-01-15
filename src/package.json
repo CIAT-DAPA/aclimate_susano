@@ -1,8 +1,8 @@
 {
-  "name": "aclimate_susano",
+  "name": "Nicaragua aclimate",
   "version": "0.1.0",
   "private": false,
-  "homepage": "https://ciat-dapa.github.io/aclimate_susano/",
+  "homepage": "https://nicaragua.aclimate.org/",
   "dependencies": {
     "@tabler/icons-react": "^3.17.0",
     "@testing-library/jest-dom": "^5.17.0",
