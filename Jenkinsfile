@@ -49,10 +49,6 @@ pipeline {
                             rm -fr react-build.zip
                             cp -r src/build/* /var/www/docs/aclimate_nicaragua/susano/
                             rm -fr src
-                            cd /var/www/docs/aclimate_nicaragua/susano/
-                            sudo chown -R scalderon:www-data *
-                            sudo chmod -R 775 * 
-                            sudo systemctl reload apache2
                         """
                     } catch (Exception e) {
                         // Capture and handle errors during the download/deployment stage
