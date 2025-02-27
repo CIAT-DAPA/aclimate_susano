@@ -41,7 +41,7 @@ jobs:
 
       # Upload the artifact to the workflow
       - name: Upload Build Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: react-build
           path: ./src/react-build.zip
