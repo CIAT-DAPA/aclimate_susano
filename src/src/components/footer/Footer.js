@@ -25,6 +25,15 @@ function Footer() {
                     Estaciones
                   </Link>
                 </li>
+                <li className="nav-item mb-2 item-footer">
+                  <Link
+                    className="nav-link text-light"
+                    to="https://www.aclimate.org/data-policy"
+                    target="_blank"
+                  >
+                    Política de Privacidad
+                  </Link>
+                </li>
               </ul>
             </nav>
 
